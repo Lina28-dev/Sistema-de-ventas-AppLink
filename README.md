@@ -1,4 +1,4 @@
-# Gestor de Ventas LiliPink
+# Gestor de Ventas AppLink
 
 Sistema de gestión de ventas y stock para tiendas de ropa y accesorios.
 Desarrollado con tecnologías modernas y buenas prácticas de programación.
