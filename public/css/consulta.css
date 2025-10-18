@@ -1,0 +1,122 @@
+/* Importar Montserrat desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* Aplicar Montserrat como fuente principal para todo el documento */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #333; /* Color de texto más suave que negro puro */
+    line-height: 1.6; /* Mejor espaciado entre líneas */
+}
+
+/* Campos de entrada */
+#entrada, #entrada_producto {
+    width: 50%;
+    font-size: 1.4em;
+    color: #000000;
+    border-radius: 5px;
+    padding: 10px; /* Más padding para mejor tacto */
+    border: 2px solid #7c6b7c; /* Color que combina con tus botones */
+    margin-bottom: 15px;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    transition: border-color 0.3s ease;
+}
+
+#entrada:focus, #entrada_producto:focus {
+    border-color: #FF00FF; /* Resaltar cuando está enfocado */
+}
+
+/* Etiquetas */
+label {
+    padding: 5px;
+    margin: 5px 5px 10px 0px;
+    display: block;
+    color: #000000;
+    font-weight: 600; /* Montserrat semi-bold */
+    font-size: 1.1em;
+}
+
+/* Tablas */
+table {
+    border: 1px solid #000000;
+    padding: 2px;
+    color: #040404;
+    border-radius: 5px;
+    width: 100%;
+    border-collapse: collapse; /* Bordes más limpios */
+    font-weight: 400;
+}
+
+.art {
+    width: 10%;
+}
+
+.campos {
+    padding: 10px; /* Más espacio en celdas */
+    font-size: 1.2em;
+    font-style: normal; /* Mejor legibilidad que itálico */
+    color: #000000;
+    text-shadow: none;
+    font-weight: 500; /* Medium weight para destacar */
+    background-color: #f8f8f8; /* Fondo sutil para cabeceras */
+}
+
+.datos {
+    padding: 8px 4px; /* Más espacio vertical */
+    color: #000000;
+    border: 1px solid #ddd; /* Borde más suave */
+    font-size: 1em;
+    background-color: #FFFFFF;
+    font-weight: 400;
+}
+
+/* Botones */
+button {
+    background-color: #7c6b7c;
+    height: 40px;
+    padding: 5px 20px;
+    text-align: center;
+    margin: 2px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    color: #FFFFFF;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1em;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #5d4b5d; /* Color más oscuro al hover */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
+.in_line {
+    display: inline;
+    width: 20%;
+}
+
+/* Clases adicionales para mejor tipografía */
+.texto-medio {
+    font-weight: 500;
+}
+
+.texto-negrita {
+    font-weight: 700;
+}
+
+.texto-claro {
+    font-weight: 300;
+}
