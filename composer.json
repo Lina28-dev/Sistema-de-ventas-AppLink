@@ -1,0 +1,9 @@
+{
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "files": ["index.php", "config.php", "mi_otra_funcion.php"]
+        
+    }
+}

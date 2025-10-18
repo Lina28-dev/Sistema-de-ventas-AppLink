@@ -1,0 +1,56 @@
+*{
+	margin: 0;
+	padding: 0;
+	font-family: Vegur, 'Montserrat', Verdana, sans-serif;
+}
+.logo {
+    height: 40px; /* Ajusta según necesites */
+    width: auto; /* Mantiene la proporción */
+    vertical-align: middle; /* Alinea bien con el texto */
+    margin-right: 10px; /* Espacio entre logo y texto */
+}
+
+/* Opcional: Para hacer el logo responsive */
+@media (max-width: 768px) {
+    .logo {
+        height: 30px;
+    }
+}
+.main_bar{
+	width: 100%;
+	min-height: 55px;
+	background-color: #ba9b9b; /* black */
+	padding: 10px;
+	box-shadow: inset 20px -5px 8px rgba(255,255,255,0.35);
+}
+
+#brand{
+	color: #FFFFFF; /* white */
+	font-size: 2.2em;
+	margin-left: 100px;
+	text-shadow: none;
+	float: left;
+}
+.info_general{
+	width: 80%;
+	margin: 10px auto;
+	font-size: 1em;
+	background-color: #FF00FF; /* fuchsia */
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow:  inset -10px -5px 5px rgba(255,255,255,0.50);
+	border: 2px solid #FFFFFF; /* white */
+	color: #FFFFFF; /* white */
+	text-align: center;
+}
+.info_general p{
+	text-shadow: none;
+}
+.info_pagina{
+	float: left;
+	color: #FFFFFF; /* white */
+	text-shadow: none;
+	margin-left: 50px;
+	margin-top: 16px;
+	
+}

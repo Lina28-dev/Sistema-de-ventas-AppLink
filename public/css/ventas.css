@@ -1,0 +1,18 @@
+.nueva-venta{
+	/*display: none;*/
+}
+
+.info_general2{
+	margin: 10px auto;
+	font-size: 1em;
+	background-color: #FF00FF; /* fuchsia */
+	padding: 10px;
+	box-shadow:  inset -10px -5px 5px rgba(255,255,255,0.50);
+	border: 2px solid #FFFFFF; /* white */
+	color: #FFFFFF; /* white */
+	text-align: center;
+	border-radius: 8px;
+}
+.info_general2 p{
+	text-shadow: none;
+}
