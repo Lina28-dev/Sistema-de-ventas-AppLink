@@ -1,0 +1,10 @@
+AddHandler application/x-httpd-php .php
+DirectoryIndex index.php index.html
+
+# Habilitar mod_rewrite
+RewriteEngine On
+
+# Redirigir todas las solicitudes a archivos que no existen al index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]

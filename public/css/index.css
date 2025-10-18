@@ -1,0 +1,62 @@
+.container {
+    width: 90%;
+    margin: 20px auto;
+}
+
+.menu_central {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.menu {
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.menu:hover {
+    transform: translateY(-5px);
+}
+
+.menu1 {
+    background-color: #4CAF50;
+}
+
+.menu2 {
+    background-color: #2196F3;
+}
+
+.menu3 {
+    background-color: #FF9800;
+}
+
+.menu4 {
+    background-color: #9C27B0;
+}
+
+.menu5 {
+    background-color: #E91E63;
+}
+
+.boton {
+    color: white;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.texto_boton {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
