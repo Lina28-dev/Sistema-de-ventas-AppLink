@@ -210,10 +210,6 @@ if (isset($_SESSION['error'])) {
                                     <pre class="bg-light p-2"><code>GET /UsuarioController.php -> obtenerTodos()</code></pre>
                                 </div>
                                 <div class="col-md-6">
-                                    <h5 class="card-title">Gestión de Productos</h5>
-                                    <pre class="bg-light p-2"><code>GET /ProductoController.php -> obtenerTodos()</code></pre>
-                                </div>
-                                <div class="col-md-6">
                                     <h5 class="card-title">Gestión de Pedidos</h5>
                                     <pre class="bg-light p-2"><code>GET /PedidoController.php -> obtenerTodos()</code></pre>
                                 </div>
@@ -243,7 +239,7 @@ if (isset($_SESSION['error'])) {
                         <div class="card-body text-center">
                             <i class="fas fa-shopping-cart fa-2x text-pink mb-3"></i>
                             <h5 class="card-title">Ventas y Pedidos</h5>
-                            <p class="card-text">Carrito de compras, productos con imágenes reales, historial y métricas de ventas.</p>
+                            <p class="card-text">Carrito de compras, catálogo integrado, historial y métricas de ventas.</p>
                         </div>
                     </div>
                 </div>

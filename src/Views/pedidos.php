@@ -37,7 +37,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 include __DIR__ . '/partials/sidebar.php';
             ?>
             <main class="col-md-10 px-4">
-                <h1 class="mt-3"><i class="fas fa-box"></i> Gestión de Pedidos</h1>
+                <h1 class="mt-3"><i class="fas fa-box"></i> Gestiï¿½n de Pedidos</h1>
                 <div class="row my-4">
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Pendientes</h6><h3 id="pedidosPendientes">0</h3></div></div></div>
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">En Proceso</h6><h3 id="pedidosProceso">0</h3></div></div></div>
@@ -62,10 +62,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                         </div>
                                         <div class="row" id="productosListaPedido">
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(1, 'Panty Invisible Clásico', 24990, 15)">
+                                                <div class="card product-card" onclick="agregarAlPedido(1, 'Panty Invisible Clï¿½sico', 24990, 15)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Panty Invisible Clásico</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Clï¿½sico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Panty Invisible Clï¿½sico</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433250012</p>
                                                         <h5 class="text-success">$24.990</h5>
                                                         <span class="badge bg-info">Stock: 15</span>
@@ -84,10 +84,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(3, 'Pijama Short Algodón', 79990, 5)">
+                                                <div class="card product-card" onclick="agregarAlPedido(3, 'Pijama Short Algodï¿½n', 79990, 5)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Pijama Short Algodón</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algodï¿½n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Pijama Short Algodï¿½n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433230014</p>
                                                         <h5 class="text-success">$79.990</h5>
                                                         <span class="badge bg-info">Stock: 5</span>
@@ -106,10 +106,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(5, 'Bóxer Algodón', 19990, 20)">
+                                                <div class="card product-card" onclick="agregarAlPedido(5, 'Bï¿½xer Algodï¿½n', 19990, 20)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Bóxer Algodón</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="Bï¿½xer Algodï¿½n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Bï¿½xer Algodï¿½n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433210016</p>
                                                         <h5 class="text-success">$19.990</h5>
                                                         <span class="badge bg-info">Stock: 20</span>
@@ -225,6 +225,39 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             2: "Distribuidora del Norte",
             3: "Importaciones XYZ"
         };
+        
+        // Cargar pedidos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarPedidos();
+        });
+        
+        async function cargarPedidos() {
+            try {
+                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos.php?action=listar');
+                const data = await response.json();
+                
+                if (data.success) {
+                    pedidos = data.data.map(p => ({
+                        id: p.numero_pedido,
+                        proveedor: p.cliente_nombre || 'N/A',
+                        fechaPedido: new Date(p.fecha_pedido).toLocaleDateString(),
+                        fechaEntrega: p.fecha_entrega || '',
+                        items: JSON.parse(p.productos || '[]'),
+                        total: parseFloat(p.total) || 0,
+                        estado: p.estado || 'pendiente',
+                        notas: p.observaciones || ''
+                    }));
+                    actualizarPedidosPendientes();
+                    actualizarHistorialPedidos();
+                    actualizarEstadisticasPedidos();
+                } else {
+                    console.error('Error cargando pedidos:', data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
         document.getElementById("fechaEntrega").valueAsDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         function agregarAlPedido(id, nombre, precio, stockActual) {
             const itemExistente = pedidoActual.find(item => item.id === id);
@@ -286,30 +319,48 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             document.getElementById("totalPedido").textContent = "$" + total.toFixed(2);
             document.getElementById("cantidadItemsPedido").textContent = pedidoActual.reduce((sum, item) => sum + item.cantidad, 0);
         }
-        function generarPedido() {
+        async function generarPedido() {
             if (pedidoActual.length === 0) return;
+            
             const proveedorId = document.getElementById("proveedorSelect").value;
             const fechaEntrega = document.getElementById("fechaEntrega").value;
             const notas = document.getElementById("notasPedido").value;
             const total = pedidoActual.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            const pedido = {
-                id: "P" + String(pedidos.length + 1).padStart(4, "0"),
-                proveedor: proveedores[proveedorId],
-                fechaPedido: new Date().toLocaleDateString(),
-                fechaEntrega: fechaEntrega,
-                items: [...pedidoActual],
+            
+            const pedidoData = {
+                cliente_nombre: proveedores[proveedorId],
+                productos: pedidoActual,
                 total: total,
-                estado: "pendiente",
-                notas: notas
+                estado: 'pendiente',
+                fecha_entrega: fechaEntrega,
+                observaciones: notas
             };
-            pedidos.push(pedido);
-            alert("Pedido generado exitosamente!\nID: " + pedido.id + "\nTotal: $" + total.toFixed(2));
-            pedidoActual = [];
-            document.getElementById("notasPedido").value = "";
-            actualizarPedido();
-            actualizarPedidosPendientes();
-            actualizarHistorialPedidos();
-            actualizarEstadisticasPedidos();
+            
+            try {
+                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(pedidoData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert("Pedido generado exitosamente!\nNÃºmero: " + data.numero_pedido + "\nTotal: $" + total.toFixed(2));
+                    pedidoActual = [];
+                    document.getElementById("notasPedido").value = "";
+                    actualizarPedido();
+                    await cargarPedidos();
+                    actualizarPedidosPendientes();
+                    actualizarHistorialPedidos();
+                    actualizarEstadisticasPedidos();
+                } else {
+                    alert('Error al generar pedido: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexiÃ³n al generar pedido');
+            }
         }
         function actualizarPedidosPendientes() {
             const tbody = document.getElementById("pedidosPendientesTabla");

@@ -18,6 +18,12 @@ try {
         throw new Exception("Error de conexión: " . $conn->connect_error);
     }
 
+    // Inicializar sistema de auditoría
+    require_once __DIR__ . '/../Utils/AuditoriaLogger.php';
+    $pdo = new PDO("mysql:host=localhost;dbname=fs_clientes;charset=utf8mb4", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $auditoria = new AuditoriaLogger($pdo);
+
     // Escapar valores para prevenir SQL injection
     $nick = $conn->real_escape_string($_POST['nick']);
     $password = $_POST['password'];
@@ -27,6 +33,19 @@ try {
     $result = $conn->query($sql);
 
     if ($result->num_rows === 0) {
+        // Registrar intento de login con usuario inexistente
+        try {
+            $auditoria->registrarActividad(
+                'fs_usuarios', 
+                'LOGIN_FAILED', 
+                0, 
+                null, 
+                ['nick' => $nick, 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Desconocida'], 
+                "Intento de login con usuario inexistente: $nick"
+            );
+        } catch (Exception $e) {
+            // Si hay error con auditoría, no interrumpir el proceso
+        }
         throw new Exception('Usuario no encontrado');
     }
 
@@ -34,6 +53,8 @@ try {
 
     // Verificar contraseña
     if (!password_verify($password, $user['password'])) {
+        // Registrar intento fallido
+        $auditoria->registrarLogin($user['id_usuario'], $user['nick'], false);
         throw new Exception('Contraseña incorrecta');
     }
 
@@ -45,10 +66,14 @@ try {
     $_SESSION['is_medium'] = $user['is_medium'];
     $_SESSION['is_visitor'] = $user['is_visitor'];
     $_SESSION['authenticated'] = true;
+    $_SESSION['login_time'] = time(); // Para calcular duración de sesión
 
     // Registrar último acceso
     $update_sql = "UPDATE fs_usuarios SET ultimo_acceso = NOW() WHERE id_usuario = " . $user['id_usuario'];
     $conn->query($update_sql);
+
+    // Registrar login exitoso en auditoría
+    $auditoria->registrarLogin($user['id_usuario'], $user['nombre'] . ' ' . $user['apellido'], true);
 
     echo json_encode([
         'success' => true,

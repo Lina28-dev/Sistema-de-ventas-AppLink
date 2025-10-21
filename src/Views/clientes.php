@@ -20,8 +20,8 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
-        .badge-revendedor { background-color: #FF1493; color: white; }
-        .badge-cliente { background-color: #17a2b8; color: white; }
+        .badge-cliente { background-color: #6c757d; }
+        .badge-clienteconhistorial { background-color: #FF1493; }
     </style>
 </head>
 <body>
@@ -33,142 +33,235 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 include __DIR__ . '/partials/sidebar.php';
             ?>
             <main class="col-md-10 px-4">
-                <h1 class="mt-3"><i class="fas fa-users"></i> Gestión de Clientes</h1>
+                <h1 class="mt-3"><i class="fas fa-users"></i> GestiÃ³n de Clientes</h1>
+                
+                <!-- EstadÃ­sticas -->
                 <div class="row my-4">
-                    <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Total Clientes</h6><h3 id="totalClientes">0</h3></div></div></div>
-                    <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Clientes con Historial</h6><h3 id="totalRevendedoras">0</h3></div></div></div>
-                    <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Nuevos Este Mes</h6><h3 id="nuevosMes">0</h3></div></div></div>
-                    <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Activos</h6><h3 id="clientesActivos">0</h3></div></div></div>
-                </div>
-                <ul class="nav nav-tabs">
-                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#lista">Lista de Clientes</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#nuevo">Nuevo Cliente</button></li>
-                </ul>
-                <div class="tab-content p-3">
-                    <div class="tab-pane fade show active" id="lista">
-                        <div class="card mb-3">
+                    <div class="col-md-3">
+                        <div class="card card-stat">
                             <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por nombre, teléfono o identificación...">
-                                            <button class="btn btn-pink" onclick="buscarCliente()"><i class="fas fa-search"></i></button>
-                                        </div>
+                                <h6 class="text-muted">Total Clientes</h6>
+                                <h3 id="totalClientes">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Clientes con Historial</h6>
+                                <h3 id="totalRevendedoras">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Nuevos Este Mes</h6>
+                                <h3 id="nuevosMes">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Activos</h6>
+                                <h3 id="clientesActivos">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PestaÃ±as -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#lista" type="button">
+                            <i class="fas fa-list"></i> Lista de Clientes
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nuevo" type="button">
+                            <i class="fas fa-plus"></i> Nuevo Cliente
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Contenido de las pestaÃ±as -->
+                <div class="tab-content p-3">
+                    <!-- Lista de Clientes -->
+                    <div class="tab-pane fade show active" id="lista">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Lista de Clientes</h5>
+                                <div class="d-flex gap-2">
+                                    <div class="input-group" style="width: 300px;">
+                                        <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por nombre, telÃ©fono o identificaciÃ³n...">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="buscarCliente()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                     </div>
-                                    <div class="col-md-3">
-                                        <select class="form-select" id="filtroTipo" onchange="filtrarClientes()">
-                                            <option value="">Todos</option>
-                                            <option value="cliente">Clientes</option>
-                                            <option value="revendedor">Empleados</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button class="btn btn-success w-100" onclick="exportarClientes()"><i class="fas fa-file-excel"></i> Exportar</button>
-                                    </div>
+                                    <select class="form-select" style="width: 150px;">
+                                        <option>Todos</option>
+                                        <option>Cliente</option>
+                                        <option>Revendedora</option>
+                                    </select>
+                                    <button class="btn btn-success" onclick="exportarClientes()">
+                                        <i class="fas fa-file-excel"></i> Exportar
+                                    </button>
                                 </div>
+                            </div>
+                            <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
+                                    <table class="table table-striped">
                                         <thead>
-                                            <tr><th>#</th><th>Nombre</th><th>Identificación</th><th>Teléfono</th><th>Email</th><th>Localidad</th><th>Tipo</th><th>Descuento</th><th>Acciones</th></tr>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Nombre</th>
+                                                <th>IdentificaciÃ³n</th>
+                                                <th>TelÃ©fono</th>
+                                                <th>Email</th>
+                                                <th>Localidad</th>
+                                                <th>Tipo</th>
+                                                <th>Descuento</th>
+                                                <th>Acciones</th>
+                                            </tr>
                                         </thead>
                                         <tbody id="tablaClientes">
-                                            <tr><td colspan="9" class="text-center text-muted">No hay clientes registrados</td></tr>
+                                            <tr><td colspan="9" class="text-center text-muted">Cargando clientes...</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-muted" id="contadorClientes">Mostrando 0 clientes</span>
-                                    <nav><ul class="pagination pagination-sm mb-0" id="paginacion"></ul></nav>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span id="contadorClientes">Mostrando 0 clientes</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Nuevo Cliente -->
                     <div class="tab-pane fade" id="nuevo">
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Nuevo Cliente</h5>
+                            </div>
                             <div class="card-body">
-                                <h5 class="card-title"><i class="fas fa-user-plus"></i> Registrar Nuevo Cliente</h5>
                                 <form id="formCliente">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label"><i class="fas fa-user"></i> Nombre Completo *</label>
-                                            <input type="text" class="form-control" id="nombreCompleto" required>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <label class="form-label"><i class="fas fa-id-card"></i> Tipo ID *</label>
-                                            <select class="form-select" id="tipoId" required>
-                                                <option value="CC">Cédula</option>
-                                                <option value="CE">Cédula Extranjería</option>
-                                                <option value="NIT">NIT</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <label class="form-label"><i class="fas fa-hashtag"></i> Número C.C *</label>
-                                            <input type="text" class="form-control" id="numeroId" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
-                                            <input type="tel" class="form-control" id="telefono" required>
-                                        </div>
-                                        <div class="col-md-8 mb-3">
-                                            <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
-                                            <input type="email" class="form-control" id="email">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 mb-3">
-                                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
-                                            <input type="text" class="form-control" id="direccion">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-city"></i> Ciudad *</label>
-                                            <input type="text" class="form-control" id="ciudad" value="Bogotá" required>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-map"></i> Localidad *</label>
-                                            <select class="form-select" id="localidad" required>
-                                                <option value="">Seleccione...</option>
-                                                <option value="Usaquén">Usaquén</option>
-                                                <option value="Chapinero">Chapinero</option>
-                                                <option value="Santa Fe">Santa Fe</option>
-                                                <option value="San Cristóbal">San Cristóbal</option>
-                                                <option value="Usme">Usme</option>
-                                                <option value="Kennedy">Kennedy</option>
-                                                <option value="Fontibón">Fontibón</option>
-                                                <option value="Engativá">Engativá</option>
-                                                <option value="Suba">Suba</option>
-                                                <option value="Bosa">Bosa</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-mail-bulk"></i> Código Postal</label>
-                                            <input type="text" class="form-control" id="codigoPostal">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label"><i class="fas fa-user-tag"></i> Tipo de Cliente</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="tipoCliente" id="esCliente" value="0" checked>
-                                                <label class="form-check-label" for="esCliente">Cliente Normal</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="tipoCliente" id="esRevendedor" value="1">
-                                                <label class="form-check-label" for="esRevendedor">Cliente con Historial</label>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-user"></i> Nombre Completo *</label>
+                                                <input type="text" class="form-control" id="nombreCompleto" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 mb-3" id="campoDescuento" style="display: none;">
-                                            <label class="form-label"><i class="fas fa-percent"></i> Descuento (%)</label>
-                                            <input type="number" class="form-control" id="descuento" min="0" max="50" value="0">
-                                            <small class="text-muted">Solo para clientes con historial de compra (0-50%)</small>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-id-card"></i> Tipo ID</label>
+                                                <select class="form-select" id="tipoId">
+                                                    <option value="CC">CÃ©dula</option>
+                                                    <option value="CE">CÃ©dula ExtranjerÃ­a</option>
+                                                    <option value="PA">Pasaporte</option>
+                                                    <option value="TI">Tarjeta Identidad</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-hashtag"></i> NÃºmero C.C *</label>
+                                                <input type="text" class="form-control" id="numeroId" required>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-pink btn-lg"><i class="fas fa-save"></i> Guardar Cliente</button>
-                                        <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()"><i class="fas fa-times"></i> Cancelar</button>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-phone"></i> TelÃ©fono *</label>
+                                                <input type="tel" class="form-control" id="telefono" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                                                <input type="email" class="form-control" id="email">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-map-marker-alt"></i> DirecciÃ³n</label>
+                                                <input type="text" class="form-control" id="direccion">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-city"></i> Ciudad</label>
+                                                <input type="text" class="form-control" id="ciudad" value="BogotÃ¡" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-map-pin"></i> Localidad</label>
+                                                <select class="form-select" id="localidad">
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="UsaquÃ©n">UsaquÃ©n</option>
+                                                    <option value="Chapinero">Chapinero</option>
+                                                    <option value="Santa Fe">Santa Fe</option>
+                                                    <option value="San CristÃ³bal">San CristÃ³bal</option>
+                                                    <option value="Usme">Usme</option>
+                                                    <option value="Tunjuelito">Tunjuelito</option>
+                                                    <option value="Bosa">Bosa</option>
+                                                    <option value="Kennedy">Kennedy</option>
+                                                    <option value="FontibÃ³n">FontibÃ³n</option>
+                                                    <option value="EngativÃ¡">EngativÃ¡</option>
+                                                    <option value="Suba">Suba</option>
+                                                    <option value="Barrios Unidos">Barrios Unidos</option>
+                                                    <option value="Teusaquillo">Teusaquillo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-mail-bulk"></i> CÃ³digo Postal</label>
+                                                <input type="text" class="form-control" id="codigoPostal">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-tags"></i> Tipo de Cliente</label>
+                                                <div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="tipoCliente" id="esCliente" value="0" checked>
+                                                        <label class="form-check-label" for="esCliente">Cliente</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="tipoCliente" id="esRevendedora" value="1">
+                                                        <label class="form-check-label" for="esRevendedora">Cliente con Historial</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6" id="campoDescuento" style="display: none;">
+                                            <div class="mb-3">
+                                                <label class="form-label"><i class="fas fa-percent"></i> Descuento (%)</label>
+                                                <input type="number" class="form-control" id="descuento" min="0" max="100" value="0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-pink">
+                                            <i class="fas fa-save"></i> Guardar Cliente
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">
+                                            <i class="fas fa-broom"></i> Limpiar
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -178,141 +271,82 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             </main>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        console.log('ðŸš€ Sistema de Clientes iniciado');
+        
+        const API_URL = '/Sistema-de-ventas-AppLink-main/api/clientes.php';
         let clientes = [];
         let clienteEditando = null;
-        document.querySelectorAll('input[name="tipoCliente"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.getElementById('campoDescuento').style.display = this.value === '1' ? 'block' : 'none';
-                if (this.value === '0') document.getElementById('descuento').value = '0';
-            });
-        });
-        document.getElementById('formCliente').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const cliente = {
-                id: clienteEditando ? clienteEditando.id : 'C' + String(clientes.length + 1).padStart(4, '0'),
-                nombre: document.getElementById('nombreCompleto').value,
-                tipoId: document.getElementById('tipoId').value,
-                numeroId: document.getElementById('numeroId').value,
-                telefono: document.getElementById('telefono').value,
-                email: document.getElementById('email').value,
-                direccion: document.getElementById('direccion').value,
-                ciudad: document.getElementById('ciudad').value,
-                localidad: document.getElementById('localidad').value,
-                codigoPostal: document.getElementById('codigoPostal').value,
-                tipo: document.querySelector('input[name="tipoCliente"]:checked').value,
-                descuento: document.getElementById('descuento').value,
-                fechaRegistro: new Date().toLocaleDateString()
-            };
-            if (clienteEditando) {
-                const index = clientes.findIndex(c => c.id === clienteEditando.id);
-                clientes[index] = cliente;
-                clienteEditando = null;
-                alert('Cliente actualizado exitosamente');
-            } else {
-                clientes.push(cliente);
-                alert('Cliente registrado exitosamente');
+
+        async function cargarClientes() {
+            try {
+                console.log('ðŸ” Cargando clientes desde API...');
+                const response = await fetch(API_URL + '?action=listar');
+                console.log('ðŸ“¡ Respuesta recibida:', response.status);
+                
+                const data = await response.json();
+                console.log('ðŸ“Š Datos recibidos:', data);
+                
+                if (data.success) {
+                    console.log('âœ… Procesando', data.data.length, 'clientes');
+                    clientes = data.data.map(c => ({
+                        id: c.id,
+                        nombre: c.nombre_completo,
+                        tipoId: c.CC ? c.CC.split(' ')[0] : 'CC',
+                        numeroId: c.CC ? c.CC.split(' ').slice(1).join(' ') : '',
+                        telefono: c.telefono,
+                        email: c.email || '',
+                        direccion: c.direccion || '',
+                        ciudad: c.ciudad || '',
+                        localidad: c.localidad || '',
+                        codigoPostal: c.codigo_postal || '',
+                        tipo: c.revendedora ? '1' : '0',
+                        descuento: parseInt(c.descuento) || 0,
+                        fechaRegistro: new Date(c.fecha_registro).toLocaleDateString('es-ES')
+                    }));
+                    actualizarTablaClientes();
+                    await actualizarEstadisticas();
+                } else {
+                    console.error('âŒ Error cargando clientes:', data.error);
+                }
+            } catch (error) {
+                console.error('ðŸš¨ Error de conexiÃ³n:', error);
             }
-            limpiarFormulario();
-            actualizarTablaClientes();
-            actualizarEstadisticas();
-            document.querySelector('[data-bs-target="#lista"]').click();
-        });
+        }
+
+        async function actualizarEstadisticas() {
+            try {
+                const response = await fetch(API_URL + '?action=estadisticas');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalClientes').textContent = data.data.total || 0;
+                    document.getElementById('totalRevendedoras').textContent = data.data.con_historial || 0;
+                    document.getElementById('nuevosMes').textContent = data.data.nuevos_mes || 0;
+                    document.getElementById('clientesActivos').textContent = data.data.activos || 0;
+                } else {
+                    document.getElementById('totalClientes').textContent = clientes.length;
+                    document.getElementById('totalRevendedoras').textContent = clientes.filter(c => c.tipo === '1').length;
+                    document.getElementById('nuevosMes').textContent = clientes.length;
+                    document.getElementById('clientesActivos').textContent = clientes.length;
+                }
+            } catch (error) {
+                console.error('Error cargando estadÃ­sticas:', error);
+                document.getElementById('totalClientes').textContent = clientes.length;
+                document.getElementById('totalRevendedoras').textContent = clientes.filter(c => c.tipo === '1').length;
+                document.getElementById('nuevosMes').textContent = clientes.length;
+                document.getElementById('clientesActivos').textContent = clientes.length;
+            }
+        }
+
         function actualizarTablaClientes() {
             const tbody = document.getElementById('tablaClientes');
             if (clientes.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">No hay clientes registrados</td></tr>';
             } else {
                 tbody.innerHTML = clientes.map((c, i) => `<tr>
-                    <td>${i + 1}</td>
-                    <td>${c.nombre}</td>
-                    <td>${c.tipoId} ${c.numeroId}</td>
-                    <td>${c.telefono}</td>
-                    <td>${c.email || '-'}</td>
-                    <td>${c.localidad}</td>
-                    <td><span class="badge ${c.tipo === '1' ? 'badge-revendedor' : 'badge-cliente'}">${c.tipo === '1' ? 'Revendedora' : 'Cliente'}</span></td>
-                    <td>${c.descuento}%</td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="editarCliente('${c.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-success" onclick="verDetalles('${c.id}')" title="Ver detalles"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarCliente('${c.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`).join('');
-            }
-            document.getElementById('contadorClientes').textContent = `Mostrando ${clientes.length} clientes`;
-        }
-        function actualizarEstadisticas() {
-            document.getElementById('totalClientes').textContent = clientes.length;
-            document.getElementById('totalRevendedoras').textContent = clientes.filter(c => c.tipo === '1').length;
-            document.getElementById('nuevosMes').textContent = clientes.length;
-            document.getElementById('clientesActivos').textContent = clientes.length;
-        }
-        function editarCliente(id) {
-            const cliente = clientes.find(c => c.id === id);
-            if (cliente) {
-                clienteEditando = cliente;
-                document.getElementById('nombreCompleto').value = cliente.nombre;
-                document.getElementById('tipoId').value = cliente.tipoId;
-                document.getElementById('numeroId').value = cliente.numeroId;
-                document.getElementById('telefono').value = cliente.telefono;
-                document.getElementById('email').value = cliente.email;
-                document.getElementById('direccion').value = cliente.direccion;
-                document.getElementById('ciudad').value = cliente.ciudad;
-                document.getElementById('localidad').value = cliente.localidad;
-                document.getElementById('codigoPostal').value = cliente.codigoPostal;
-                if (cliente.tipo === '1') {
-                    document.getElementById('esClienteconHistorial').checked = true;
-                    document.getElementById('campoDescuento').style.display = 'block';
-                    document.getElementById('descuento').value = cliente.descuento;
-                } else {
-                    document.getElementById('esCliente').checked = true;
-                }
-                document.querySelector('[data-bs-target="#nuevo"]').click();
-            }
-        }
-        function verDetalles(id) {
-            const cliente = clientes.find(c => c.id === id);
-            if (cliente) {
-                alert(`DETALLES DEL CLIENTE\n\nID: ${cliente.id}\nNombre: ${cliente.nombre}\nIdentificación: ${cliente.tipoId} ${cliente.numeroId}\nTeléfono: ${cliente.telefono}\nEmail: ${cliente.email || 'No registrado'}\nDirección: ${cliente.direccion || 'No registrada'}\nLocalidad: ${cliente.localidad}, ${cliente.ciudad}\nTipo: ${cliente.tipo === '1' ? 'Revendedora' : 'Cliente'}\nDescuento: ${cliente.descuento}%\nFecha Registro: ${cliente.fechaRegistro}`);
-            }
-        }
-        function eliminarCliente(id) {
-            if (confirm('¿Está seguro de eliminar este cliente?')) {
-                clientes = clientes.filter(c => c.id !== id);
-                actualizarTablaClientes();
-                actualizarEstadisticas();
-            }
-        }
-        function limpiarFormulario() {
-            document.getElementById('formCliente').reset();
-            document.getElementById('campoDescuento').style.display = 'none';
-            clienteEditando = null;
-        }
-        function buscarCliente() {
-            const termino = document.getElementById('buscarCliente').value.toLowerCase();
-            const filtrados = clientes.filter(c => 
-                c.nombre.toLowerCase().includes(termino) || 
-                c.telefono.includes(termino) || 
-                c.numeroId.includes(termino)
-            );
-            mostrarClientesFiltrados(filtrados);
-        }
-        function filtrarClientes() {
-            const tipo = document.getElementById('filtroTipo').value;
-            if (tipo === '') {
-                actualizarTablaClientes();
-            } else {
-                const filtrados = clientes.filter(c => (tipo === 'clienteconhistorial' && c.tipo === '1') || (tipo === 'cliente' && c.tipo === '0'));
-                mostrarClientesFiltrados(filtrados);
-            }
-        }
-        function mostrarClientesFiltrados(filtrados) {
-            const tbody = document.getElementById('tablaClientes');
-            if (filtrados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">No se encontraron clientes</td></tr>';
-            } else {
-                tbody.innerHTML = filtrados.map((c, i) => `<tr>
                     <td>${i + 1}</td>
                     <td>${c.nombre}</td>
                     <td>${c.tipoId} ${c.numeroId}</td>
@@ -328,12 +362,177 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                     </td>
                 </tr>`).join('');
             }
-            document.getElementById('contadorClientes').textContent = `Mostrando ${filtrados.length} clientes`;
+            document.getElementById('contadorClientes').textContent = `Mostrando ${clientes.length} clientes`;
         }
+
+        document.querySelectorAll('input[name="tipoCliente"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('campoDescuento').style.display = this.value === '1' ? 'block' : 'none';
+                if (this.value === '0') document.getElementById('descuento').value = '0';
+            });
+        });
+
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('ðŸ“ Enviando datos de cliente...');
+            
+            const clienteData = {
+                nombre: document.getElementById('nombreCompleto').value,
+                telefono: document.getElementById('telefono').value,
+                email: document.getElementById('email').value || null,
+                direccion: document.getElementById('direccion').value || null,
+                ciudad: document.getElementById('ciudad').value || null,
+                localidad: document.getElementById('localidad').value || null,
+                codigo_postal: document.getElementById('codigoPostal').value || null,
+                cc: (document.getElementById('tipoId').value + ' ' + document.getElementById('numeroId').value).trim() || null,
+                tipo: document.querySelector('input[name="tipoCliente"]:checked').value,
+                descuento: parseInt(document.getElementById('descuento').value) || 0
+            };
+            
+            console.log('ðŸ“‹ Datos a enviar:', clienteData);
+
+            try {
+                let response;
+                if (clienteEditando) {
+                    response = await fetch(API_URL + '?id=' + clienteEditando.id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(clienteData)
+                    });
+                } else {
+                    response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(clienteData)
+                    });
+                }
+                
+                const data = await response.json();
+                console.log('ðŸ’¾ Respuesta del servidor:', data);
+                
+                if (data.success) {
+                    alert(data.message);
+                    console.log('âœ… Cliente guardado exitosamente');
+                    await cargarClientes();
+                    limpiarFormulario();
+                    document.querySelector('[data-bs-target="#lista"]').click();
+                } else {
+                    console.error('âŒ Error del servidor:', data.error);
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('ðŸš¨ Error de conexiÃ³n al guardar:', error);
+                alert('Error de conexiÃ³n al guardar cliente');
+            }
+        });
+
+        function limpiarFormulario() {
+            document.getElementById('formCliente').reset();
+            document.getElementById('campoDescuento').style.display = 'none';
+            clienteEditando = null;
+        }
+
         function exportarClientes() {
-            alert('Función de exportación en desarrollo. Se exportarán ' + clientes.length + ' clientes a Excel.');
+            alert('FunciÃ³n de exportaciÃ³n en desarrollo. Se exportarÃ¡n ' + clientes.length + ' clientes a Excel.');
         }
-        actualizarEstadisticas();
+
+        async function eliminarCliente(id) {
+            if (confirm('Â¿EstÃ¡ seguro de eliminar este cliente?')) {
+                try {
+                    const response = await fetch(API_URL + '?id=' + id, {
+                        method: 'DELETE'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert(data.message);
+                        await cargarClientes();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error de conexiÃ³n al eliminar cliente');
+                }
+            }
+        }
+
+        function editarCliente(id) {
+            const cliente = clientes.find(c => c.id == id);
+            if (cliente) {
+                clienteEditando = cliente;
+                document.getElementById('nombreCompleto').value = cliente.nombre;
+                document.getElementById('tipoId').value = cliente.tipoId;
+                document.getElementById('numeroId').value = cliente.numeroId;
+                document.getElementById('telefono').value = cliente.telefono;
+                document.getElementById('email').value = cliente.email;
+                document.getElementById('direccion').value = cliente.direccion;
+                document.getElementById('ciudad').value = cliente.ciudad;
+                document.getElementById('localidad').value = cliente.localidad;
+                document.getElementById('codigoPostal').value = cliente.codigoPostal;
+                
+                if (cliente.tipo === '1') {
+                    document.getElementById('esRevendedora').checked = true;
+                    document.getElementById('descuento').value = cliente.descuento;
+                    document.getElementById('campoDescuento').style.display = 'block';
+                } else {
+                    document.getElementById('esCliente').checked = true;
+                    document.getElementById('campoDescuento').style.display = 'none';
+                }
+                
+                document.querySelector('[data-bs-target="#nuevo"]').click();
+            }
+        }
+
+        function verDetalles(id) {
+            const cliente = clientes.find(c => c.id == id);
+            if (cliente) {
+                alert('DETALLES DEL CLIENTE\n\nID: ' + cliente.id + '\nNombre: ' + cliente.nombre + '\nIdentificaciÃ³n: ' + cliente.tipoId + ' ' + cliente.numeroId + '\nTelÃ©fono: ' + cliente.telefono + '\nEmail: ' + (cliente.email || 'No registrado') + '\nDirecciÃ³n: ' + (cliente.direccion || 'No registrada') + '\nLocalidad: ' + cliente.localidad + ', ' + cliente.ciudad + '\nTipo: ' + (cliente.tipo === '1' ? 'Revendedora' : 'Cliente') + '\nDescuento: ' + cliente.descuento + '%\nFecha Registro: ' + cliente.fechaRegistro);
+            }
+        }
+
+        async function buscarCliente() {
+            const termino = document.getElementById('buscarCliente').value.trim();
+            
+            if (termino === '') {
+                await cargarClientes();
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL + '?action=buscar&termino=' + encodeURIComponent(termino));
+                const data = await response.json();
+                
+                if (data.success) {
+                    clientes = data.data.map(c => ({
+                        id: c.id,
+                        nombre: c.nombre_completo,
+                        tipoId: c.CC ? c.CC.split(' ')[0] : 'CC',
+                        numeroId: c.CC ? c.CC.split(' ').slice(1).join(' ') : '',
+                        telefono: c.telefono,
+                        email: c.email || '',
+                        direccion: c.direccion || '',
+                        ciudad: c.ciudad || '',
+                        localidad: c.localidad || '',
+                        codigoPostal: c.codigo_postal || '',
+                        tipo: c.revendedora ? '1' : '0',
+                        descuento: parseInt(c.descuento) || 0,
+                        fechaRegistro: new Date(c.fecha_registro).toLocaleDateString('es-ES')
+                    }));
+                    actualizarTablaClientes();
+                    await actualizarEstadisticas();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ðŸš€ PÃ¡gina cargada, iniciando carga de datos...');
+            cargarClientes();
+            actualizarEstadisticas();
+        });
     </script>
 </body>
 </html>

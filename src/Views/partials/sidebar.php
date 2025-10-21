@@ -8,7 +8,6 @@
     <ul class="nav flex-column">
         <li class="nav-item"><a class="nav-link<?php echo ($activePage=='dashboard')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
         <li class="nav-item"><a class="nav-link<?php echo ($activePage=='ventas')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/ventas"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
-        <li class="nav-item"><a class="nav-link<?php echo ($activePage=='productos')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/productos"><i class="fas fa-cube"></i> Productos</a></li>
         <li class="nav-item"><a class="nav-link<?php echo ($activePage=='clientes')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/clientes"><i class="fas fa-users"></i> Clientes</a></li>
         <li class="nav-item"><a class="nav-link<?php echo ($activePage=='pedidos')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/pedidos"><i class="fas fa-box"></i> Pedidos</a></li>
         <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>

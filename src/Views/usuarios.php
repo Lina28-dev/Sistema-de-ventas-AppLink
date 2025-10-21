@@ -43,180 +43,196 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios - Sistema de Ventas AppLink</title>
+    <title>Usuarios - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Sistema-de-ventas-AppLink-main/public/css/base.css">
     <style>
         body { background-color: #f8f9fa; }
         .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
         .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #FF1493; color: white; }
-        .sidebar .nav-link i { margin-right: 10px; }
-        .main-content { padding: 20px; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
+        .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
-        .btn-pink:hover { background-color: #DC143C; border-color: #DC143C; color: white; }
-        .text-pink { color: #FF1493; }
+        .btn-pink:hover { background-color: #FF69B4; color: white; }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar fijo y responsive -->
-            <div class="col-md-2 sidebar p-3">
-                <?php 
-                    $activePage = 'usuarios';
-                    include __DIR__ . '/partials/sidebar.php';
-                ?>
-            </div>
-            <div class="col-md-10 main-content">
-                <div class="px-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="fw-bold">Gestión de Usuarios</h1>
-                        <button class="btn btn-pink" id="btnNuevoUsuario" onclick="var tab = new bootstrap.Tab(document.getElementById('nuevo-tab')); tab.show();"><i class="fas fa-plus"></i> Nuevo Usuario</button>
-                    </div>
-                    <!-- Cards de métricas -->
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="mb-1">Total Usuarios</h6>
-                                    <span class="fs-2 fw-bold text-pink"><?php echo count($usuarios); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="mb-1">Administradores</h6>
-                                    <span class="fs-2 fw-bold text-pink"><?php echo count(array_filter($usuarios, function($u) { return $u['is_admin']; })); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="mb-1">Usuarios Regulares</h6>
-                                    <span class="fs-2 fw-bold text-pink"><?php echo count(array_filter($usuarios, function($u) { return !$u['is_admin']; })); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="mb-1">Activos</h6>
-                                    <span class="fs-2 fw-bold text-pink"><?php echo count($usuarios); ?></span>
-                                </div>
+            <!-- Sidebar centralizado -->
+            <?php 
+                $activePage = 'usuarios';
+                include __DIR__ . '/partials/sidebar.php';
+            ?>
+            <main class="col-md-10 px-4">
+                <h1 class="mt-3"><i class="fas fa-users-cog"></i> Gestión de Usuarios</h1>
+                
+                <!-- Estadísticas -->
+                <div class="row my-4">
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Total Usuarios</h6>
+                                <h3><?php echo count($usuarios); ?></h3>
                             </div>
                         </div>
                     </div>
-                    <!-- Navegación de pestañas -->
-                    <ul class="nav nav-tabs mb-3" id="usuariosTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="lista-tab" data-bs-toggle="tab" data-bs-target="#listaUsuarios" type="button" role="tab" aria-controls="listaUsuarios" aria-selected="true">Lista de Usuarios</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="nuevo-tab" data-bs-toggle="tab" data-bs-target="#nuevoUsuario" type="button" role="tab" aria-controls="nuevoUsuario" aria-selected="false">Nuevo Usuario</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="usuariosTabsContent">
-                        <div class="tab-pane fade show active" id="listaUsuarios" role="tabpanel" aria-labelledby="lista-tab">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" id="buscarUsuario" placeholder="Buscar por nombre, usuario o email..." onkeyup="buscarUsuario()">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <select class="form-select" id="filtroRol" onchange="filtrarPorRol()">
-                                                <option value="">Todos los roles</option>
-                                                <option value="admin">Administrador</option>
-                                                <option value="user">Usuario</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 text-end">
-                                            <button class="btn btn-success"><i class="fas fa-file-excel"></i> Exportar</button>
-                                        </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Administradores</h6>
+                                <h3><?php echo count(array_filter($usuarios, function($u) { return $u['is_admin']; })); ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Usuarios Regulares</h6>
+                                <h3><?php echo count(array_filter($usuarios, function($u) { return !$u['is_admin']; })); ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat">
+                            <div class="card-body">
+                                <h6 class="text-muted">Activos</h6>
+                                <h3><?php echo count($usuarios); ?></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestañas -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#listaUsuarios" type="button">
+                            <i class="fas fa-list"></i> Lista de Usuarios
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nuevoUsuario" type="button">
+                            <i class="fas fa-plus"></i> Nuevo Usuario
+                        </button>
+                    </li>
+                </ul>
+                <!-- Contenido de las pestañas -->
+                <div class="tab-content p-3">
+                    <!-- Lista de Usuarios -->
+                    <div class="tab-pane fade show active" id="listaUsuarios">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Lista de Usuarios</h5>
+                                <div class="d-flex gap-2">
+                                    <div class="input-group" style="width: 300px;">
+                                        <input type="text" class="form-control" id="buscarUsuario" placeholder="Buscar por nombre, usuario o email..." onkeyup="buscarUsuario()">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
+                                    <select class="form-select" style="width: 150px;" id="filtroRol" onchange="filtrarPorRol()">
+                                        <option value="">Todos los roles</option>
+                                        <option value="admin">Administrador</option>
+                                        <option value="user">Usuario</option>
+                                    </select>
+                                    <button class="btn btn-success">
+                                        <i class="fas fa-file-excel"></i> Exportar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Apellido</th>
+                                                <th>Usuario</th>
+                                                <th>Email</th>
+                                                <th>Rol</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaUsuarios">
+                                            <?php if (!empty($usuarios)): ?>
+                                                <?php foreach ($usuarios as $usuario): ?>
                                                 <tr>
-                                                    <th>ID</th>
-                                                    <th>Nombre</th>
-                                                    <th>Apellido</th>
-                                                    <th>Usuario</th>
-                                                    <th>Email</th>
-                                                    <th>Rol</th>
-                                                    <th>Acciones</th>
+                                                    <td><?php echo htmlspecialchars($usuario['id_usuario']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['nick']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+                                                    <td>
+                                                        <?php if ($usuario['is_admin']): ?>
+                                                            <span class="badge bg-primary">Administrador</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-secondary">Usuario</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info" title="Editar" onclick="editarUsuario(<?php echo $usuario['id_usuario']; ?>)">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" title="Eliminar" onclick="eliminarUsuario(<?php echo $usuario['id_usuario']; ?>)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody id="tablaUsuarios">
-                                                <?php if (!empty($usuarios)): ?>
-                                                    <?php foreach ($usuarios as $usuario): ?>
-                                                    <tr>
-                                                        <td><?php echo htmlspecialchars($usuario['id_usuario']); ?></td>
-                                                        <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
-                                                        <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
-                                                        <td><?php echo htmlspecialchars($usuario['nick']); ?></td>
-                                                        <td><?php echo htmlspecialchars($usuario['email']); ?></td>
-                                                        <td>
-                                                            <?php if ($usuario['is_admin']): ?>
-                                                                <span class="badge bg-primary">Administrador</span>
-                                                            <?php else: ?>
-                                                                <span class="badge bg-secondary">Usuario</span>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="editarUsuario(<?php echo $usuario['id_usuario']; ?>)">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminarUsuario(<?php echo $usuario['id_usuario']; ?>)">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <tr>
-                                                        <td colspan="7" class="text-center text-muted">
-                                                            <?php echo isset($error_db) ? $error_db : 'No hay usuarios registrados'; ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php endif; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="7" class="text-center text-muted">
+                                                        <?php echo isset($error_db) ? $error_db : 'No hay usuarios registrados'; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="nuevoUsuario" role="tabpanel" aria-labelledby="nuevo-tab">
-                            <div class="card">
-                                <div class="card-body">
-                                    <form id="formUsuario">
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="nombreUsuario" class="form-label">Nombre</label>
+                    </div>
+                    <!-- Nuevo Usuario -->
+                    <div class="tab-pane fade" id="nuevoUsuario">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Nuevo Usuario</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="formUsuario">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="nombreUsuario" class="form-label"><i class="fas fa-user"></i> Nombre *</label>
                                                 <input type="text" class="form-control" id="nombreUsuario" required>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label for="apellidoUsuario" class="form-label">Apellido</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="apellidoUsuario" class="form-label"><i class="fas fa-user"></i> Apellido *</label>
                                                 <input type="text" class="form-control" id="apellidoUsuario" required>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="usuarioUsuario" class="form-label">Usuario</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="usuarioUsuario" class="form-label"><i class="fas fa-at"></i> Usuario *</label>
                                                 <input type="text" class="form-control" id="usuarioUsuario" required>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label for="emailUsuario" class="form-label">Email</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="emailUsuario" class="form-label"><i class="fas fa-envelope"></i> Email *</label>
                                                 <input type="email" class="form-control" id="emailUsuario" required>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="rolUsuario" class="form-label">Rol</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="rolUsuario" class="form-label"><i class="fas fa-user-tag"></i> Rol *</label>
                                                 <select class="form-select" id="rolUsuario" required>
                                                     <option value="">Selecciona un rol</option>
                                                     <option value="admin">Administrador</option>
@@ -224,17 +240,29 @@ try {
                                                 </select>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-pink">Guardar Usuario</button>
-                                    </form>
-                                </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="passwordUsuario" class="form-label"><i class="fas fa-lock"></i> Contraseña *</label>
+                                                <input type="password" class="form-control" id="passwordUsuario" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-pink">
+                                            <i class="fas fa-save"></i> Guardar Usuario
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="limpiarFormularioUsuario()">
+                                            <i class="fas fa-broom"></i> Limpiar
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-                <!-- Toasts y tooltips -->
     <!-- Toasts y tooltips -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="usuariosToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -246,8 +274,139 @@ try {
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Funciones para manejo de usuarios
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toast para mensajes
+            const toastElement = document.getElementById('usuariosToast');
+            const toast = new bootstrap.Toast(toastElement);
+            
+            // Función para mostrar toast
+            function showToast(message, type = 'success') {
+                const toastBody = toastElement.querySelector('.toast-body');
+                toastBody.textContent = message;
+                
+                // Cambiar color según tipo
+                toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+                toast.show();
+            }
+            
+            // Manejar formulario de nuevo usuario
+            const userForm = document.getElementById('userForm');
+            if (userForm) {
+                userForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    
+                    fetch('../../api/usuarios.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('Usuario creado exitosamente');
+                            userForm.reset();
+                            // Recargar la lista de usuarios
+                            loadUsers();
+                        } else {
+                            showToast(data.message || 'Error al crear usuario', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Error de conexión', 'danger');
+                    });
+                });
+            }
+            
+            // Función para cargar usuarios
+            function loadUsers() {
+                fetch('../../api/usuarios.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateUsersTable(data.data);
+                            updateStats(data.stats);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Error al cargar usuarios', 'danger');
+                    });
+            }
+            
+            // Función para actualizar tabla de usuarios
+            function updateUsersTable(users) {
+                const tbody = document.querySelector('#usersTable tbody');
+                if (!tbody) return;
+                
+                tbody.innerHTML = '';
+                
+                users.forEach(user => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.nombre}</td>
+                        <td>${user.email}</td>
+                        <td><span class="badge bg-${user.rol === 'admin' ? 'primary' : 'secondary'}">${user.rol}</span></td>
+                        <td>${new Date(user.fecha_creacion).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editUser(${user.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                });
+            }
+            
+            // Función para actualizar estadísticas
+            function updateStats(stats) {
+                document.getElementById('totalUsers').textContent = stats.total || 0;
+                document.getElementById('activeUsers').textContent = stats.activos || 0;
+                document.getElementById('adminUsers').textContent = stats.administradores || 0;
+            }
+            
+            // Cargar usuarios al iniciar
+            loadUsers();
+        });
+        
+        // Función global para editar usuario
+        function editUser(id) {
+            // Implementar edición de usuario
+            console.log('Editar usuario:', id);
+        }
+        
+        // Función global para eliminar usuario
+        function deleteUser(id) {
+            if (confirm('¿Está seguro de que desea eliminar este usuario?')) {
+                fetch(`../../api/usuarios.php?id=${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Usuario eliminado exitosamente');
+                        loadUsers();
+                    } else {
+                        showToast(data.message || 'Error al eliminar usuario', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error de conexión', 'danger');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
         // Cargar usuarios desde PHP
         let usuarios = <?php echo json_encode($usuarios); ?>;
         let usuarioEditando = null;

@@ -81,9 +81,6 @@ switch ($request) {
     case '/pedidos':
         require VIEWS_PATH . '/pedidos.php';
         break;
-    case '/productos':
-        require VIEWS_PATH . '/productos.php';
-        break;
     case '/alta-baja':
         require VIEWS_PATH . '/alta_baja.php';
         break;
