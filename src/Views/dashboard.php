@@ -84,8 +84,7 @@ function getUserType() {
             <nav class="col-md-2 d-md-block sidebar">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
-                        <h4 class="text-white">Lilipink</h4>
-                        <small class="text-light">Sistema de Ventas</small>
+                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/logo.jpg" alt="logo" class="img-fluid mb-2" style="max-height:80px;object-fit:contain;">
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">

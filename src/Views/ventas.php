@@ -115,7 +115,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(1, 'Panty Invisible Clásico', 24990, 15)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Panty Invisible Clásico</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433250012</p>
                                                         <h5 class="text-success">$24.990</h5>
@@ -126,7 +126,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(2, 'Brasier Push Up Encaje', 59990, 8)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/brasier-pushup.jpg" alt="Brasier Push Up Encaje" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/brasier-pushup.jpg" alt="Brasier Push Up Encaje" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Braísier Push Up Encaje</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433240013</p>
                                                         <h5 class="text-success">$59.990</h5>
@@ -137,7 +137,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(3, 'Pijama Short Algodón', 79990, 5)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Pijama Short Algodón</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433230014</p>
                                                         <h5 class="text-success">$79.990</h5>
@@ -148,7 +148,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(4, 'Camiseta Manga Corta', 29990, 12)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/camiseta-mc.jpg" alt="Camiseta Manga Corta" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/camiseta-mc.jpg" alt="Camiseta Manga Corta" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Camiseta Manga Corta</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433220015</p>
                                                         <h5 class="text-success">$29.990</h5>
@@ -159,7 +159,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(5, 'Bóxer Algodón', 19990, 20)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Bóxer Algodón</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433210016</p>
                                                         <h5 class="text-success">$19.990</h5>
@@ -170,7 +170,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlCarrito(6, 'Medias Tobilleras', 9990, 30)">
                                                     <div class="card-body text-center">
-                                                        <img src="../../public/assets/images/medias-tobilleras.jpg" alt="Medias Tobilleras" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/medias-tobilleras.jpg" alt="Medias Tobilleras" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Medias Tobilleras</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433200017</p>
                                                         <h5 class="text-success">$9.990</h5>

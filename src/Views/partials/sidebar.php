@@ -3,7 +3,7 @@
 ?>
 <nav class="col-md-2 sidebar p-3">
     <h4 class="text-white text-center mb-4">
-        <img src="/Sistema-de-ventas-AppLink-main/public/img/logo.jpg" class="img-fluid" style="max-width: 120px;">
+        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/logo.jpg" class="img-fluid" style="max-width: 120px;">
     </h4>
     <ul class="nav flex-column">
         <li class="nav-item"><a class="nav-link<?php echo ($activePage=='dashboard')?' active':''; ?>" href="/Sistema-de-ventas-AppLink-main/public/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>

@@ -30,7 +30,7 @@ try {
     );
     
     // Obtener usuarios de la base de datos (actualizado para PostgreSQL)
-    $stmt = $pdo->query("SELECT * FROM usuarios ORDER BY name");
+    $stmt = $pdo->query("SELECT * FROM usuarios ORDER BY nombre, apellido");
     $usuarios = $stmt->fetchAll();
     
 } catch (PDOException $e) {
@@ -158,7 +158,7 @@ try {
                                             <?php if (!empty($usuarios)): ?>
                                                 <?php foreach ($usuarios as $usuario): ?>
                                                 <tr>
-                                                    <td><?php echo htmlspecialchars($usuario['id_usuario']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['id']); ?></td>
                                                     <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
                                                     <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
                                                     <td><?php echo htmlspecialchars($usuario['nick']); ?></td>
@@ -171,10 +171,10 @@ try {
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-info" title="Editar" onclick="editarUsuario(<?php echo $usuario['id_usuario']; ?>)">
+                                                        <button class="btn btn-sm btn-info" title="Editar" onclick="editarUsuario(<?php echo $usuario['id']; ?>)">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-danger" title="Eliminar" onclick="eliminarUsuario(<?php echo $usuario['id_usuario']; ?>)">
+                                                        <button class="btn btn-sm btn-danger" title="Eliminar" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </td>
