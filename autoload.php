@@ -23,6 +23,7 @@ class AppAutoloader {
         self::addNamespace('App\\Services\\Business\\', __DIR__ . '/app/Services/Business/');
         self::addNamespace('App\\Services\\Validation\\', __DIR__ . '/app/Services/Validation/');
         self::addNamespace('App\\Middleware\\', __DIR__ . '/app/Middleware/');
+        self::addNamespace('App\\Helpers\\', __DIR__ . '/app/Helpers/');
         self::addNamespace('Config\\', __DIR__ . '/config/');
         
         // Registrar función de autoload

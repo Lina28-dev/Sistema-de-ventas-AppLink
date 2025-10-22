@@ -16,10 +16,10 @@ require_once __DIR__ . '/../Utils/Database.php';
 require_once __DIR__ . '/../Utils/CSRFToken.php';
 
 // Obtener conexión a la base de datos
-$config = require __DIR__ . '/../../config/app.php';
+$config = require __DIR__ . '/../../config/app_postgresql.php';
 try {
     $pdo = new PDO(
-        "mysql:host={$config['db']['host']};dbname={$config['db']['name']};charset={$config['db']['charset']}",
+        "pgsql:host={$config['db']['host']};port={$config['db']['port']};dbname={$config['db']['name']}",
         $config['db']['user'],
         $config['db']['pass'],
         [
@@ -29,8 +29,8 @@ try {
         ]
     );
     
-    // Obtener usuarios de la base de datos
-    $stmt = $pdo->query("SELECT * FROM fs_usuarios ORDER BY nombre");
+    // Obtener usuarios de la base de datos (actualizado para PostgreSQL)
+    $stmt = $pdo->query("SELECT * FROM usuarios ORDER BY name");
     $usuarios = $stmt->fetchAll();
     
 } catch (PDOException $e) {
