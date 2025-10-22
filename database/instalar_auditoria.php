@@ -296,7 +296,7 @@ try {
     echo "</div>";
     
     echo "<div style='text-align: center; margin: 20px 0;'>";
-    echo "<a href='dashboard_auditoria.php' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 5px;'>📊 Ver Dashboard de Auditoría</a>";
+    echo "<a href='database/dashboard_auditoria.php' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 5px;'>📊 Ver Dashboard de Auditoría</a>";
     echo "<a href='public/' style='background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 5px;'>🚀 Ir al Sistema</a>";
     echo "</div>";
     

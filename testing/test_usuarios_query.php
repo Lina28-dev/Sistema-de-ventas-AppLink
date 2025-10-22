@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 echo "🧪 Probando consulta corregida de usuarios...\n";
 

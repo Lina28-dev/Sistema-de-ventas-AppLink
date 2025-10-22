@@ -171,7 +171,7 @@
         
         <h3>🛠️ Herramientas de Mantenimiento</h3>
         <a href="mantenimiento_mysql.bat" class="btn btn-warning" download>⬇️ Descargar Script de Limpieza</a>
-        <a href="test_connection.php" class="btn">🔗 Test de Conexión Simple</a>
+        <a href="../testing/test_connection.php" class="btn">🔗 Test de Conexión Simple</a>
         <a href="public/" class="btn btn-success">🚀 Ir al Sistema</a>
         
         <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px; font-size: 12px; color: #6c757d;">
