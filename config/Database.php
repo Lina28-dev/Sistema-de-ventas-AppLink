@@ -13,12 +13,22 @@ class Database {
     
     public static function getDSN() {
         $config = self::getConfig();
-        return sprintf(
-            "mysql:host=%s;dbname=%s;charset=%s",
-            $config['host'],
-            $config['name'],
-            $config['charset']
-        );
+        if (isset($config['driver']) && $config['driver'] === 'pgsql') {
+            return sprintf(
+                "pgsql:host=%s;port=%s;dbname=%s",
+                $config['host'],
+                $config['port'] ?? '5432',
+                $config['name']
+            );
+        } else {
+            // Fallback a MySQL
+            return sprintf(
+                "mysql:host=%s;dbname=%s;charset=%s",
+                $config['host'],
+                $config['name'],
+                $config['charset']
+            );
+        }
     }
     
     public static function getUsername() {
@@ -30,11 +40,22 @@ class Database {
     }
     
     public static function getOptions() {
-        return [
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            \PDO::ATTR_EMULATE_PREPARES => false,
-            \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
-        ];
+        $config = self::getConfig();
+        if (isset($config['driver']) && $config['driver'] === 'pgsql') {
+            return [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+                \PDO::ATTR_STRINGIFY_FETCHES => false
+            ];
+        } else {
+            // Opciones para MySQL
+            return [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+            ];
+        }
     }
 }
