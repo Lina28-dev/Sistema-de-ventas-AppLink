@@ -233,7 +233,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         
         async function cargarPedidos() {
             try {
-                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos.php?action=listar');
+                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos_simple.php?action=listar');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -337,7 +337,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             };
             
             try {
-                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos.php', {
+                const response = await fetch('/Sistema-de-ventas-AppLink-main/api/pedidos_simple.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(pedidoData)

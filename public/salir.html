@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔐 Cerrar Sesión</h2>
+        <div class="spinner"></div>
+        <p>Cerrando sesión y limpiando datos...</p>
+        <div style="margin-top: 20px;">
+            <a href="/Sistema-de-ventas-AppLink-main/public/" class="btn">🏠 Ir al Inicio</a>
+        </div>
+    </div>
+
+    <script>
+        // Ejecutar logout inmediatamente
+        (function() {
+            console.log('🚪 Ejecutando logout...');
+            
+            // Limpiar todo el almacenamiento
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                console.log('✅ Storage limpiado');
+            } catch(e) {
+                console.log('⚠️ Error limpiando storage:', e);
+            }
+            
+            // Intentar múltiples métodos de logout
+            const logoutUrls = [
+                '/Sistema-de-ventas-AppLink-main/public/api/logout.php',
+                '/Sistema-de-ventas-AppLink-main/public/logout.php',
+                '/Sistema-de-ventas-AppLink-main/logout-emergency.php'
+            ];
+            
+            let logoutCompleted = false;
+            
+            // Intentar cada URL hasta que una funcione
+            logoutUrls.forEach((url, index) => {
+                if (logoutCompleted) return;
+                
+                fetch(url, {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                .then(() => {
+                    console.log(`✅ Logout completado con: ${url}`);
+                    logoutCompleted = true;
+                })
+                .catch((e) => {
+                    console.log(`⚠️ Error con ${url}:`, e);
+                    if (index === logoutUrls.length - 1 && !logoutCompleted) {
+                        console.log('⚠️ Todos los métodos de logout fallaron, pero continuando...');
+                    }
+                });
+            });
+            
+            // Redireccionar después de 2 segundos sin importar el resultado
+            setTimeout(() => {
+                console.log('🔄 Redirigiendo...');
+                window.location.replace('/Sistema-de-ventas-AppLink-main/public/');
+            }, 2000);
+            
+        })();
+    </script>
+</body>
+</html>

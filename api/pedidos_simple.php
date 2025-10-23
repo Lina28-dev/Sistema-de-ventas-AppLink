@@ -1,6 +1,6 @@
 <?php
 /**
- * API REST para gestión de pedidos
+ * API simplificada para pedidos usando conexión directa MySQL
  */
 
 header('Content-Type: application/json');
@@ -8,70 +8,40 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-session_start();
-
-// Verificar autenticación - más flexible para desarrollo
-$permitir_acceso = false;
-
-// Permitir si viene del mismo dominio
-$referer = $_SERVER['HTTP_REFERER'] ?? '';
-if (strpos($referer, 'localhost/Sistema-de-ventas-AppLink-main') !== false) {
-    $permitir_acceso = true;
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
 }
-
-// Permitir si está autenticado en sesión
-if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
-    $permitir_acceso = true;
-}
-
-// Para desarrollo: permitir acceso local temporal
-if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
-    $permitir_acceso = true;
-}
-
-if (!$permitir_acceso) {
-    http_response_code(401);
-    echo json_encode(['error' => 'No autorizado']);
-    exit;
-}
-
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../src/Utils/AuditoriaLogger.php';
 
 try {
-    $pdo = new PDO(
-        App\Config\Database::getDSN(),
-        App\Config\Database::getUsername(),
-        App\Config\Database::getPassword(),
-        App\Config\Database::getOptions()
-    );
+    // Conexión directa a MySQL
+    $host = 'localhost';
+    $dbname = 'fs_clientes';
+    $username = 'root';
+    $password = '';
     
-    $auditoria = new AuditoriaLogger($pdo);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $method = $_SERVER['REQUEST_METHOD'];
     $action = $_GET['action'] ?? '';
     
     switch ($method) {
         case 'GET':
-            if ($action === 'listar') {
-                listarPedidos($pdo);
-            } elseif ($action === 'estadisticas') {
+            if ($action === 'estadisticas') {
                 obtenerEstadisticas($pdo);
-            } elseif ($action === 'buscar') {
-                buscarPedidos($pdo, $_GET['termino'] ?? '');
             } else {
                 listarPedidos($pdo);
             }
             break;
             
         case 'POST':
-            crearPedido($pdo, $auditoria);
+            crearPedido($pdo);
             break;
             
         case 'PUT':
             $id = $_GET['id'] ?? null;
             if ($id) {
-                actualizarPedido($pdo, $auditoria, $id);
+                actualizarPedido($pdo, $id);
             } else {
                 http_response_code(400);
                 echo json_encode(['error' => 'ID requerido']);
@@ -81,7 +51,7 @@ try {
         case 'DELETE':
             $id = $_GET['id'] ?? null;
             if ($id) {
-                eliminarPedido($pdo, $auditoria, $id);
+                eliminarPedido($pdo, $id);
             } else {
                 http_response_code(400);
                 echo json_encode(['error' => 'ID requerido']);
@@ -99,39 +69,47 @@ try {
 }
 
 function listarPedidos($pdo) {
-    $stmt = $pdo->query("
-        SELECT 
-            p.*,
-            c.nombre as cliente_nombre_completo,
-            c.telefono as cliente_telefono
-        FROM fs_pedidos p
-        LEFT JOIN fs_clientes c ON p.cliente_id = c.id
-        ORDER BY p.fecha_pedido DESC
-    ");
-    
-    $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    echo json_encode([
-        'success' => true,
-        'data' => $pedidos,
-        'total' => count($pedidos)
-    ]);
+    try {
+        $stmt = $pdo->query("
+            SELECT 
+                p.*,
+                c.nombre as cliente_nombre_completo,
+                c.telefono as cliente_telefono
+            FROM fs_pedidos p
+            LEFT JOIN fs_clientes c ON p.cliente_id = c.id
+            ORDER BY p.fecha_pedido DESC
+        ");
+        
+        $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo json_encode([
+            'success' => true,
+            'data' => $pedidos,
+            'total' => count($pedidos)
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['error' => 'Error al listar pedidos: ' . $e->getMessage()]);
+    }
 }
 
 function obtenerEstadisticas($pdo) {
-    $stats = [];
-    $stats['total'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos")->fetchColumn();
-    $stats['pendientes'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE estado = 'pendiente'")->fetchColumn();
-    $stats['completados'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE estado = 'completado'")->fetchColumn();
-    $stats['hoy'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE DATE(fecha_pedido) = CURRENT_DATE")->fetchColumn();
-    
-    echo json_encode([
-        'success' => true,
-        'data' => $stats
-    ]);
+    try {
+        $stats = [];
+        $stats['total'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos")->fetchColumn();
+        $stats['pendientes'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE estado = 'pendiente'")->fetchColumn();
+        $stats['completados'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE estado = 'completado'")->fetchColumn();
+        $stats['hoy'] = $pdo->query("SELECT COUNT(*) FROM fs_pedidos WHERE DATE(fecha_pedido) = CURRENT_DATE")->fetchColumn();
+        
+        echo json_encode([
+            'success' => true,
+            'data' => $stats
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['error' => 'Error al obtener estadísticas: ' . $e->getMessage()]);
+    }
 }
 
-function crearPedido($pdo, $auditoria) {
+function crearPedido($pdo) {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input) {
@@ -153,25 +131,16 @@ function crearPedido($pdo, $auditoria) {
         $stmt->execute([
             $numeroPedido,
             $input['cliente_id'] ?? null,
-            $input['cliente_nombre'] ?? null,
+            $input['cliente_nombre'] ?? 'Cliente General',
             json_encode($input['productos'] ?? []),
             $input['total'] ?? 0,
             $input['estado'] ?? 'pendiente',
             $input['fecha_entrega'] ?? null,
             $input['observaciones'] ?? null,
-            $_SESSION['user_id'] ?? null
+            1 // ID usuario por defecto
         ]);
         
         $pedidoId = $pdo->lastInsertId();
-        
-        $auditoria->registrarActividad(
-            'fs_pedidos',
-            'INSERT',
-            $pedidoId,
-            null,
-            $input,
-            "Pedido creado: $numeroPedido"
-        );
         
         echo json_encode([
             'success' => true,
@@ -186,7 +155,7 @@ function crearPedido($pdo, $auditoria) {
     }
 }
 
-function actualizarPedido($pdo, $auditoria, $id) {
+function actualizarPedido($pdo, $id) {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input) {
@@ -229,15 +198,6 @@ function actualizarPedido($pdo, $auditoria, $id) {
             $id
         ]);
         
-        $auditoria->registrarActividad(
-            'fs_pedidos',
-            'UPDATE',
-            $id,
-            $datosAnteriores,
-            $input,
-            "Pedido actualizado: {$datosAnteriores['numero_pedido']}"
-        );
-        
         echo json_encode([
             'success' => true,
             'message' => 'Pedido actualizado exitosamente'
@@ -249,7 +209,7 @@ function actualizarPedido($pdo, $auditoria, $id) {
     }
 }
 
-function eliminarPedido($pdo, $auditoria, $id) {
+function eliminarPedido($pdo, $id) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM fs_pedidos WHERE id = ?");
         $stmt->execute([$id]);
@@ -264,15 +224,6 @@ function eliminarPedido($pdo, $auditoria, $id) {
         $stmt = $pdo->prepare("DELETE FROM fs_pedidos WHERE id = ?");
         $stmt->execute([$id]);
         
-        $auditoria->registrarActividad(
-            'fs_pedidos',
-            'DELETE',
-            $id,
-            $pedido,
-            null,
-            "Pedido eliminado: {$pedido['numero_pedido']}"
-        );
-        
         echo json_encode([
             'success' => true,
             'message' => 'Pedido eliminado exitosamente'
@@ -282,31 +233,5 @@ function eliminarPedido($pdo, $auditoria, $id) {
         http_response_code(500);
         echo json_encode(['error' => 'Error al eliminar pedido: ' . $e->getMessage()]);
     }
-}
-
-function buscarPedidos($pdo, $termino) {
-    $termino = "%$termino%";
-    
-    $stmt = $pdo->prepare("
-        SELECT 
-            p.*,
-            c.nombre as cliente_nombre_completo,
-            c.telefono as cliente_telefono
-        FROM fs_pedidos p
-        LEFT JOIN fs_clientes c ON p.cliente_id = c.id
-        WHERE p.numero_pedido LIKE ? 
-           OR p.cliente_nombre LIKE ? 
-           OR c.nombre LIKE ?
-        ORDER BY p.fecha_pedido DESC
-    ");
-    
-    $stmt->execute([$termino, $termino, $termino]);
-    $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    echo json_encode([
-        'success' => true,
-        'data' => $pedidos,
-        'total' => count($pedidos)
-    ]);
 }
 ?>

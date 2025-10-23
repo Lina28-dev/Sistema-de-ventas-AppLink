@@ -121,7 +121,7 @@ if (isset($_SESSION['error'])) {
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#">
-            <img src="../../public/assets/images/logo.jpg" alt="AppLink Logo" height="40">
+            <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/logo.jpg" alt="AppLink Logo" height="40">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -158,7 +158,7 @@ if (isset($_SESSION['error'])) {
                     </button>
                 </div>
                 <div class="col-lg-6">
-                    <img src="../../public/assets/images/fondo.jpg" alt="Dashboard Preview" class="img-fluid hero-image">
+                    <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/fondo.jpg" alt="Dashboard Preview" class="img-fluid hero-image">
                 </div>
             </div>
         </div>

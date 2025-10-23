@@ -851,33 +851,41 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         });
         
         // Funciones para gestión de ventas
-        function filtrarVentas() {
+        async function filtrarVentas() {
             const fechaInicio = document.getElementById('filtroFechaInicio').value;
             const fechaFin = document.getElementById('filtroFechaFin').value;
             const estado = document.getElementById('filtroEstado').value;
             const cliente = document.getElementById('filtroCliente').value;
             
-            let ventasFiltradas = ventas.filter(venta => {
-                let cumpleFiltros = true;
-                
-                if (fechaInicio && venta.fecha < fechaInicio) cumpleFiltros = false;
-                if (fechaFin && venta.fecha > fechaFin) cumpleFiltros = false;
-                if (estado && venta.estado !== estado) cumpleFiltros = false;
-                if (cliente && !venta.cliente.toLowerCase().includes(cliente.toLowerCase())) cumpleFiltros = false;
-                
-                return cumpleFiltros;
-            });
+            const filtros = new URLSearchParams();
+            filtros.append('accion', 'listar');
+            if (fechaInicio) filtros.append('fecha_inicio', fechaInicio);
+            if (fechaFin) filtros.append('fecha_fin', fechaFin);
+            if (estado) filtros.append('estado', estado);
+            if (cliente) filtros.append('cliente', cliente);
             
-            actualizarListaVentasGestion(ventasFiltradas);
-            mostrarToast(`Filtro aplicado: ${ventasFiltradas.length} ventas encontradas`, 'info');
+            try {
+                const response = await fetch(`../Controllers/api_ventas.php?${filtros.toString()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    actualizarListaVentasGestion(data.data);
+                    mostrarToast(`Filtro aplicado: ${data.data.length} ventas encontradas`, 'info');
+                } else {
+                    mostrarToast('Error al filtrar: ' + data.error, 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al filtrar ventas', 'danger');
+            }
         }
         
-        function limpiarFiltros() {
+        async function limpiarFiltros() {
             document.getElementById('filtroFechaInicio').value = '';
             document.getElementById('filtroFechaFin').value = '';
             document.getElementById('filtroEstado').value = '';
             document.getElementById('filtroCliente').value = '';
-            actualizarListaVentasGestion(ventas);
+            await actualizarListaVentas();
             mostrarToast('Filtros limpiados', 'info');
         }
         
@@ -919,132 +927,204 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             }
         }
         
-        function actualizarListaVentas() {
+        async function actualizarListaVentas() {
             mostrarToast('Actualizando lista de ventas...', 'info');
-            setTimeout(() => {
-                actualizarListaVentasGestion();
-                mostrarToast('Lista actualizada exitosamente', 'success');
-            }, 1000);
+            try {
+                const response = await fetch('../Controllers/api_ventas.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    ventas = data.data;
+                    actualizarListaVentasGestion();
+                    actualizarHistorial();
+                    actualizarEstadisticas();
+                    mostrarToast('Lista actualizada exitosamente', 'success');
+                } else {
+                    mostrarToast('Error al actualizar: ' + (data.error || 'Error desconocido'), 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al actualizar ventas', 'danger');
+            }
         }
         
-        function editarVenta(id) {
-            const venta = ventas.find(v => v.id === id);
-            if (!venta) {
-                mostrarToast('Venta no encontrada', 'danger');
-                return;
-            }
-            
-            // Cargar datos en el modal
-            document.getElementById('editVentaId').value = venta.id;
-            document.getElementById('editFechaVenta').value = venta.fecha;
-            document.getElementById('editEstadoVenta').value = venta.estado;
+        async function editarVenta(id) {
+            try {
+                const response = await fetch(`../Controllers/api_ventas.php?accion=obtener&id=${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    mostrarToast('Error al obtener venta: ' + data.error, 'danger');
+                    return;
+                }
+                
+                const venta = data.data;
+                
+                // Cargar datos en el modal
+                document.getElementById('editVentaId').value = venta.id;
+                document.getElementById('editFechaVenta').value = venta.fecha.slice(0, 16); // Para datetime-local
             document.getElementById('editClienteVenta').value = venta.cliente_id || 'general';
             document.getElementById('editMetodoPago').value = venta.metodo;
             document.getElementById('editDescuento').value = venta.descuento || 0;
             document.getElementById('editTotal').value = venta.total;
             document.getElementById('editObservaciones').value = venta.observaciones || '';
             
-            // Mostrar productos
-            const productosDiv = document.getElementById('editProductosLista');
-            productosDiv.innerHTML = venta.items.map(item => `
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                    <div>
-                        <strong>${item.nombre}</strong><br>
-                        <small class="text-muted">Precio: $${item.precio} | Cantidad: ${item.cantidad}</small>
-                    </div>
-                    <div>
-                        <strong>$${(item.precio * item.cantidad).toFixed(2)}</strong>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Mostrar modal
-            new bootstrap.Modal(document.getElementById('editarVentaModal')).show();
+                document.getElementById('editEstadoVenta').value = venta.estado;
+                
+                // Mostrar productos
+                const productosDiv = document.getElementById('editProductosLista');
+                if (venta.items && venta.items.length > 0) {
+                    productosDiv.innerHTML = venta.items.map(item => `
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                            <div>
+                                <strong>${item.nombre || item.producto || 'Producto'}</strong><br>
+                                <small class="text-muted">Precio: $${item.precio} | Cantidad: ${item.cantidad}</small>
+                            </div>
+                            <div>
+                                <strong>$${(item.precio * item.cantidad).toFixed(2)}</strong>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    productosDiv.innerHTML = '<p class="text-muted">No hay productos en esta venta</p>';
+                }
+                
+                // Mostrar modal
+                new bootstrap.Modal(document.getElementById('editarVentaModal')).show();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al obtener venta', 'danger');
+            }
         }
         
-        function guardarEdicionVenta() {
+        async function guardarEdicionVenta() {
             const ventaId = parseInt(document.getElementById('editVentaId').value);
-            const ventaIndex = ventas.findIndex(v => v.id === ventaId);
             
-            if (ventaIndex === -1) {
-                mostrarToast('Error: Venta no encontrada', 'danger');
-                return;
-            }
-            
-            // Actualizar datos de la venta
-            ventas[ventaIndex].fecha = document.getElementById('editFechaVenta').value;
-            ventas[ventaIndex].estado = document.getElementById('editEstadoVenta').value;
-            ventas[ventaIndex].cliente = document.getElementById('editClienteVenta').options[document.getElementById('editClienteVenta').selectedIndex].text;
-            ventas[ventaIndex].metodo = document.getElementById('editMetodoPago').value;
-            ventas[ventaIndex].descuento = parseFloat(document.getElementById('editDescuento').value) || 0;
-            ventas[ventaIndex].observaciones = document.getElementById('editObservaciones').value;
-            
-            // Recalcular total si hay descuento
-            const subtotal = ventas[ventaIndex].items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            ventas[ventaIndex].total = subtotal * (1 - ventas[ventaIndex].descuento / 100);
-            
-            // Actualizar vistas
-            actualizarListaVentasGestion();
-            actualizarHistorial();
-            actualizarEstadisticas();
-            
-            // Cerrar modal y mostrar mensaje
-            bootstrap.Modal.getInstance(document.getElementById('editarVentaModal')).hide();
-            mostrarToast('Venta actualizada exitosamente', 'success');
-        }
-        
-        function cambiarEstadoVenta(id, nuevoEstado) {
-            const ventaIndex = ventas.findIndex(v => v.id === id);
-            if (ventaIndex === -1) {
-                mostrarToast('Venta no encontrada', 'danger');
-                return;
-            }
-            
-            const estadoAnterior = ventas[ventaIndex].estado;
-            ventas[ventaIndex].estado = nuevoEstado;
-            
-            actualizarListaVentasGestion();
-            actualizarHistorial();
-            
-            mostrarToast(`Estado cambiado de "${estadoAnterior}" a "${nuevoEstado}"`, 'success');
-        }
-        
-        function duplicarVenta(id) {
-            const ventaOriginal = ventas.find(v => v.id === id);
-            if (!ventaOriginal) {
-                mostrarToast('Venta no encontrada', 'danger');
-                return;
-            }
-            
-            const nuevaVenta = {
-                ...ventaOriginal,
-                id: ventas.length + 1,
-                fecha: new Date().toISOString().slice(0, 16),
-                estado: 'borrador'
+            const datosVenta = {
+                id: ventaId,
+                fecha: document.getElementById('editFechaVenta').value,
+                estado: document.getElementById('editEstadoVenta').value,
+                cliente_id: document.getElementById('editClienteVenta').value,
+                metodo: document.getElementById('editMetodoPago').value,
+                descuento: parseFloat(document.getElementById('editDescuento').value) || 0,
+                observaciones: document.getElementById('editObservaciones').value
             };
             
-            ventas.push(nuevaVenta);
-            actualizarListaVentasGestion();
-            actualizarHistorial();
-            actualizarEstadisticas();
-            
-            mostrarToast(`Venta #${id} duplicada como #${nuevaVenta.id}`, 'success');
+            try {
+                const response = await fetch('../Controllers/api_ventas.php', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datosVenta)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Actualizar vistas
+                    await actualizarListaVentas();
+                    
+                    // Cerrar modal y mostrar mensaje
+                    bootstrap.Modal.getInstance(document.getElementById('editarVentaModal')).hide();
+                    mostrarToast('Venta actualizada exitosamente', 'success');
+                } else {
+                    mostrarToast('Error al actualizar: ' + data.error, 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al actualizar venta', 'danger');
+            }
         }
         
-        function cancelarVenta(id) {
-            if (!confirm('¿Está seguro de que desea cancelar esta venta?')) {
+        async function cambiarEstadoVenta(id, nuevoEstado) {
+            try {
+                const response = await fetch('../Controllers/api_ventas.php?accion=estado', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id, estado: nuevoEstado })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await actualizarListaVentas();
+                    mostrarToast(data.message, 'success');
+                } else {
+                    mostrarToast('Error al cambiar estado: ' + data.error, 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al cambiar estado', 'danger');
+            }
+        }
+        
+        async function duplicarVenta(id) {
+            if (!confirm('¿Desea duplicar esta venta como borrador?')) {
                 return;
             }
             
-            cambiarEstadoVenta(id, 'cancelada');
+            try {
+                const response = await fetch('../Controllers/api_ventas.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ accion: 'duplicar', id: id })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await actualizarListaVentas();
+                    mostrarToast(`Venta #${id} duplicada como #${data.id}`, 'success');
+                } else {
+                    mostrarToast('Error al duplicar venta: ' + data.error, 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al duplicar venta', 'danger');
+            }
         }
         
-        function verDetalleCompleto(id) {
-            const venta = ventas.find(v => v.id === id);
-            if (!venta) {
-                mostrarToast('Venta no encontrada', 'danger');
+        async function cancelarVenta(id) {
+            if (!confirm('¿Está seguro de que desea cancelar esta venta? Esta acción no se puede deshacer.')) {
                 return;
             }
+            
+            try {
+                const response = await fetch(`../Controllers/api_ventas.php?id=${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await actualizarListaVentas();
+                    mostrarToast('Venta cancelada exitosamente', 'success');
+                } else {
+                    mostrarToast('Error al cancelar venta: ' + data.error, 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión al cancelar venta', 'danger');
+            }
+        }
+        
+        async function verDetalleCompleto(id) {
+            try {
+                const response = await fetch(`../Controllers/api_ventas.php?accion=detalle&id=${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    mostrarToast('Error al obtener detalle: ' + data.error, 'danger');
+                    return;
+                }
+                
+                const venta = data.data;
             
             const detalleHTML = `
                 <div class="row">
@@ -1180,6 +1260,19 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                     console.log('Clientes no disponibles, usando datos por defecto');
                 });
         }
+        
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales
+            actualizarListaVentas();
+            cargarClientes();
+            
+            // Configurar tooltips
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => {
+                new bootstrap.Tooltip(tooltip);
+            });
+        });
     </script>
 </body>
 </html>
