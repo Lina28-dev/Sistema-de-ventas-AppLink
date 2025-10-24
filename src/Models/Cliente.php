@@ -9,7 +9,7 @@ class Cliente extends BaseModel {
     protected $fillable = [
         'nombre_completo', 'dni', 'telefono', 'email', 'direccion',
         'ciudad', 'provincia', 'codigo_postal', 'es_revendedora', 
-        'descuento_porcentaje', 'activo'
+        'descuento_porcentaje', 'activo', 'categoria_id', 'segmento'
     ];
     
     /**
@@ -34,6 +34,73 @@ class Cliente extends BaseModel {
             return '<span class="badge bg-warning text-dark"><i class="fas fa-store"></i> Revendedora</span>';
         }
         return '<span class="badge bg-primary"><i class="fas fa-user"></i> Cliente</span>';
+    }
+    
+    /**
+     * Obtener badge de segmento
+     */
+    public function getSegmentoBadge() {
+        $colores = [
+            'VIP' => 'bg-warning',
+            'Premium' => 'bg-danger', 
+            'Regular' => 'bg-info',
+            'Nuevo' => 'bg-success',
+            'Inactivo' => 'bg-secondary'
+        ];
+        
+        $iconos = [
+            'VIP' => 'fas fa-crown',
+            'Premium' => 'fas fa-star',
+            'Regular' => 'fas fa-user-check',
+            'Nuevo' => 'fas fa-user-plus',
+            'Inactivo' => 'fas fa-user-slash'
+        ];
+        
+        $segmento = $this->segmento ?: 'Nuevo';
+        $color = $colores[$segmento] ?? 'bg-secondary';
+        $icono = $iconos[$segmento] ?? 'fas fa-user';
+        
+        return '<span class="badge ' . $color . '"><i class="' . $icono . '"></i> ' . $segmento . '</span>';
+    }
+    
+    /**
+     * Obtener información de categoría
+     */
+    public function getCategoria() {
+        if (!$this->categoria_id) {
+            return null;
+        }
+        
+        $stmt = $this->db->prepare("
+            SELECT * FROM categorias_clientes 
+            WHERE id = ? AND activo = 1
+        ");
+        $stmt->execute([$this->categoria_id]);
+        return $stmt->fetch();
+    }
+    
+    /**
+     * Obtener descuento por categoría
+     */
+    public function getDescuentoCategoria() {
+        $categoria = $this->getCategoria();
+        return $categoria ? $categoria['descuento_porcentaje'] : 0;
+    }
+    
+    /**
+     * Obtener límite de crédito por categoría
+     */
+    public function getLimiteCredito() {
+        $categoria = $this->getCategoria();
+        return $categoria ? $categoria['limite_credito'] : 0;
+    }
+    
+    /**
+     * Obtener días de crédito por categoría
+     */
+    public function getDiasCredito() {
+        $categoria = $this->getCategoria();
+        return $categoria ? $categoria['dias_credito'] : 0;
     }
     
     /**
@@ -72,18 +139,89 @@ class Cliente extends BaseModel {
     /**
      * Buscar clientes por término
      */
-    public static function buscar($termino, $limite = 20) {
+    public static function buscar($termino, $limite = 20, $categoria_id = null, $segmento = null) {
         $cliente = new self();
-        $stmt = $cliente->db->prepare("
-            SELECT * FROM fs_clientes 
-            WHERE (nombre_completo LIKE ? OR dni LIKE ? OR email LIKE ? OR telefono LIKE ?)
-            AND activo = 1
-            ORDER BY nombre_completo
-            LIMIT ?
-        ");
         
-        $busqueda = "%$termino%";
-        $stmt->execute([$busqueda, $busqueda, $busqueda, $busqueda, $limite]);
+        $sql = "
+            SELECT c.*, cat.nombre as categoria_nombre, cat.color as categoria_color 
+            FROM fs_clientes c
+            LEFT JOIN categorias_clientes cat ON c.categoria_id = cat.id
+            WHERE (c.nombre_completo LIKE ? OR c.dni LIKE ? OR c.email LIKE ? OR c.telefono LIKE ?)
+            AND c.activo = 1";
+        
+        $params = ["%$termino%", "%$termino%", "%$termino%", "%$termino%"];
+        
+        if ($categoria_id) {
+            $sql .= " AND c.categoria_id = ?";
+            $params[] = $categoria_id;
+        }
+        
+        if ($segmento) {
+            $sql .= " AND c.segmento = ?";
+            $params[] = $segmento;
+        }
+        
+        $sql .= " ORDER BY c.nombre_completo LIMIT ?";
+        $params[] = $limite;
+        
+        $stmt = $cliente->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Obtener clientes por categoría
+     */
+    public static function obtenerPorCategoria($categoria_id, $limite = null) {
+        $cliente = new self();
+        
+        $sql = "
+            SELECT c.*, cat.nombre as categoria_nombre, cat.color as categoria_color
+            FROM fs_clientes c
+            LEFT JOIN categorias_clientes cat ON c.categoria_id = cat.id
+            WHERE c.categoria_id = ? AND c.activo = 1
+            ORDER BY c.nombre_completo";
+        
+        if ($limite) {
+            $sql .= " LIMIT ?";
+        }
+        
+        $stmt = $cliente->db->prepare($sql);
+        $params = [$categoria_id];
+        
+        if ($limite) {
+            $params[] = $limite;
+        }
+        
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Obtener clientes por segmento
+     */
+    public static function obtenerPorSegmento($segmento, $limite = null) {
+        $cliente = new self();
+        
+        $sql = "
+            SELECT c.*, cat.nombre as categoria_nombre, cat.color as categoria_color
+            FROM fs_clientes c
+            LEFT JOIN categorias_clientes cat ON c.categoria_id = cat.id
+            WHERE c.segmento = ? AND c.activo = 1
+            ORDER BY c.nombre_completo";
+        
+        if ($limite) {
+            $sql .= " LIMIT ?";
+        }
+        
+        $stmt = $cliente->db->prepare($sql);
+        $params = [$segmento];
+        
+        if ($limite) {
+            $params[] = $limite;
+        }
+        
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
     
@@ -126,14 +264,58 @@ class Cliente extends BaseModel {
     }
     
     /**
-     * Aplicar descuento a un precio
+     * Aplicar descuento a un precio (incluye descuento de categoría)
      */
     public function aplicarDescuento($precio) {
-        if ($this->descuento_porcentaje > 0) {
-            $descuento = ($precio * $this->descuento_porcentaje) / 100;
+        $descuento_individual = $this->descuento_porcentaje > 0 ? $this->descuento_porcentaje : 0;
+        $descuento_categoria = $this->getDescuentoCategoria();
+        
+        // Usar el mayor descuento entre individual y categoría
+        $descuento_total = max($descuento_individual, $descuento_categoria);
+        
+        if ($descuento_total > 0) {
+            $descuento = ($precio * $descuento_total) / 100;
             return $precio - $descuento;
         }
         return $precio;
+    }
+    
+    /**
+     * Actualizar segmento basado en historial de compras
+     */
+    public function actualizarSegmento() {
+        $estadisticas = $this->getEstadisticas();
+        
+        if (!$estadisticas) {
+            $this->segmento = 'Nuevo';
+            return $this->save();
+        }
+        
+        $total_gastado = $estadisticas['total_gastado'] ?: 0;
+        $total_compras = $estadisticas['total_compras'] ?: 0;
+        $ultima_compra = $estadisticas['ultima_compra'];
+        
+        // Verificar si es inactivo (más de 6 meses sin comprar)
+        if ($ultima_compra) {
+            $fecha_limite = date('Y-m-d', strtotime('-6 months'));
+            if ($ultima_compra < $fecha_limite) {
+                $this->segmento = 'Inactivo';
+                return $this->save();
+            }
+        }
+        
+        // Clasificar por total gastado
+        if ($total_gastado >= 1000000 && $total_compras >= 10) {
+            $this->segmento = 'VIP';
+        } elseif ($total_gastado >= 500000 && $total_compras >= 5) {
+            $this->segmento = 'Premium';
+        } elseif ($total_compras >= 3) {
+            $this->segmento = 'Regular';
+        } else {
+            $this->segmento = 'Nuevo';
+        }
+        
+        return $this->save();
     }
     
     /**
