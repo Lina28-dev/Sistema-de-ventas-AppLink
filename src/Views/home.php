@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // 2. Redirección de Autenticación (¡Corregido Bucle!)
 // Si el usuario ya está autenticado, redirigir al dashboard
-if (isset($_SESSION['usuario_nombre'])) {
+if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
     // Redirección CORRECTA a la página principal del sistema (NO a sí mismo)
     header("Location: /Sistema-de-ventas-AppLink-main/public/dashboard");
     exit();
@@ -29,6 +29,8 @@ if (isset($_SESSION['error'])) {
     <title>AppLink - Sistema de Gestión de Ventas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/theme-styles.css">
+    <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="css/home.css">
 
     <style>
@@ -114,6 +116,73 @@ if (isset($_SESSION['error'])) {
         @media (max-width: 767px) {
             .hero { padding: 60px 0 30px 0; }
             .footer { font-size: 0.9rem; }
+        }
+
+        /* Estilos para el select de roles */
+        .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e91e63' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+        }
+
+        .form-select:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+        }
+
+        .form-select option {
+            padding: 10px;
+            color: #495057;
+        }
+
+        .btn-pink {
+            background: linear-gradient(135deg, #e91e63, #ff4081);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pink:hover {
+            background: linear-gradient(135deg, #c2185b, #e91e63);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+            color: white;
+        }
+
+        .input-group-text {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #e9ecef;
+            color: #e91e63;
+            font-weight: 500;
+        }
+
+        .form-control:focus ~ .input-group-text,
+        .form-select:focus ~ .input-group-text {
+            border-color: #e91e63;
+            background: rgba(233, 30, 99, 0.1);
+        }
+
+        /* Animación para el modal */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translate(0, -50px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -325,15 +394,18 @@ if (isset($_SESSION['error'])) {
 
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 bg-gradient" style="background: linear-gradient(135deg, #e91e63, #ff4081);">
+                    <h5 class="modal-title text-white fw-bold" id="loginModalLabel">
+                        <i class="fas fa-user-circle me-2"></i>Sistema AppLink
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="text-center mb-4">
-                        <img src="img/logo.jpg" alt="Logo" class="modal-logo" style="max-width: 150px;">
-                        <h2 class="mt-3">Iniciar Sesión</h2>
+                        <img src="assets/images/logo.jpg" alt="AppLink Logo" class="modal-logo rounded-circle" style="max-width: 120px; height: 120px; object-fit: cover; border: 3px solid #e91e63; box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);">
+                        <h2 class="mt-3 fw-bold text-primary">Iniciar Sesión</h2>
+                        <p class="text-muted">Accede a tu cuenta de AppLink</p>
                     </div>
                     <form id="loginFormModal" action="/Sistema-de-ventas-AppLink-main/public/auth" method="POST" class="needs-validation" novalidate>
                         <div class="mb-3">
@@ -354,6 +426,26 @@ if (isset($_SESSION['error'])) {
                                         placeholder="Ingrese su contraseña" required>
                             </div>
                             <div class="invalid-feedback">Por favor ingrese su contraseña</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="rol" class="form-label">Tipo de Usuario</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                <select class="form-select" id="rol" name="rol" required>
+                                    <option value="">Seleccionar rol...</option>
+                                    <option value="cliente">👤 Cliente - Gestionar mis pedidos</option>
+                                    <option value="empleado">👔 Empleado - Pedidos y ventas</option>
+                                    <option value="administrador">👑 Administrador - Acceso completo</option>
+                                </select>
+                            </div>
+                            <div class="invalid-feedback">Por favor seleccione su tipo de usuario</div>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Selecciona el tipo de cuenta con la que deseas acceder
+                                </small>
+                            </div>
                         </div>
 
                         <div class="d-grid">
@@ -382,15 +474,24 @@ if (isset($_SESSION['error'])) {
 
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Registro de Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 bg-gradient" style="background: linear-gradient(135deg, #00bcd4, #e91e63);">
+                    <h5 class="modal-title text-white fw-bold" id="registerModalLabel">
+                        <i class="fas fa-user-plus me-2"></i>Registro de Usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
+                    <!-- Logo del sistema -->
+                    <div class="text-center mb-4">
+                        <img src="assets/images/logo.jpg" alt="AppLink Logo" class="modal-logo rounded-circle" style="max-width: 80px; height: 80px; object-fit: cover; border: 2px solid #00bcd4; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);">
+                        <h4 class="mt-3 fw-bold text-primary">Únete a AppLink</h4>
+                        <p class="text-muted">Crea tu cuenta y comienza a gestionar tus ventas</p>
+                    </div>
+                    
                     <div class="row mb-4">
                         <div class="col-12 text-center">
-                            <h4>¿Cómo deseas registrarte?</h4>
+                            <h5>¿Cómo deseas registrarte?</h5>
                             <div class="btn-group" role="group">
                                 <input type="radio" class="btn-check" name="userType" id="clienteBtn" value="cliente" checked>
                                 <label class="btn btn-outline-primary" for="clienteBtn">
@@ -404,7 +505,7 @@ if (isset($_SESSION['error'])) {
                         </div>
                     </div>
 
-                    <form id="registerForm" action="register.php" method="POST" class="needs-validation" novalidate>
+                    <form id="registerForm" action="register_process.php" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="cliente">
                         
                         <div class="row">
@@ -432,6 +533,15 @@ if (isset($_SESSION['error'])) {
                                 <label for="telefono" class="form-label">Teléfono</label>
                                 <input type="tel" class="form-control" id="telefono" name="telefono" required>
                                 <div class="invalid-feedback">Por favor ingrese un teléfono válido</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cc_reg" class="form-label">Cédula de Ciudadanía (CC)</label>
+                                <input type="text" class="form-control" id="cc_reg" name="cc" required pattern="[0-9]{7,11}" maxlength="20"
+                                       title="Debe contener entre 7 y 11 dígitos numéricos">
+                                <div class="invalid-feedback">La CC debe contener entre 7 y 11 dígitos numéricos</div>
                             </div>
                         </div>
 
@@ -491,6 +601,7 @@ if (isset($_SESSION['error'])) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/login-handler.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -507,9 +618,26 @@ if (isset($_SESSION['error'])) {
                 loginModal.show();
             }
 
-            // Manejar el envío del formulario de login (Usando Fetch API para AJAX)
-            document.getElementById('loginFormModal').addEventListener('submit', async function(e) {
+            // Manejar el envío del formulario de login
+            // COMENTADO: Se usa archivo externo login-handler.js
+            /*document.getElementById('loginFormModal').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                // Validación personalizada del rol
+                const rolSelect = document.getElementById('rol');
+                const nick = document.getElementById('nick').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                // Validar campos requeridos
+                if (!nick || !password || !rolSelect.value) {
+                    this.classList.add('was-validated');
+                    if (!rolSelect.value) {
+                        rolSelect.setCustomValidity('Debe seleccionar un tipo de usuario');
+                    }
+                    return;
+                } else {
+                    rolSelect.setCustomValidity('');
+                }
                 
                 // Validación de Bootstrap 5
                 if (!this.checkValidity()) {
@@ -519,6 +647,12 @@ if (isset($_SESSION['error'])) {
 
                 const formData = new FormData(this);
                 loginAlert.style.display = 'none'; // Ocultar alerta previa
+                
+                // Mostrar indicador de carga
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+                submitBtn.disabled = true;
 
                 try {
                     const response = await fetch(this.action, {
@@ -530,19 +664,43 @@ if (isset($_SESSION['error'])) {
                     const data = await response.json(); 
 
                     if (data.success) {
-                        // Éxito: Redirigir al usuario
-                        window.location.href = data.redirect_url || '/Sistema-de-ventas-AppLink-main/public/dashboard';
+                        // Mostrar mensaje de éxito con rol
+                        const roleName = data.user?.rol ? data.user.rol.charAt(0).toUpperCase() + data.user.rol.slice(1) : 'Usuario';
+                        loginAlert.className = 'alert alert-success';
+                        loginAlert.innerHTML = `<i class="fas fa-check-circle me-2"></i>¡Bienvenido ${data.user?.nombre || ''}! Ingresando como ${roleName}...`;
+                        loginAlert.style.display = 'block';
+                        
+                        // Redirigir inmediatamente
+                        window.location.href = data.redirect || '/Sistema-de-ventas-AppLink-main/public/dashboard';
                     } else {
                         // Fracaso: Mostrar mensaje de error en el modal
-                        loginAlert.innerHTML = data.message || 'Error desconocido al iniciar sesión. Intente nuevamente.';
+                        loginAlert.className = 'alert alert-danger';
+                        loginAlert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${data.message || 'Error desconocido al iniciar sesión. Intente nuevamente.'}`;
                         loginAlert.style.display = 'block';
                         this.classList.remove('was-validated'); // Quitar la validación si el error es de credenciales
                     }
                 } catch (error) {
                     // Error de conexión o JSON
-                    loginAlert.innerHTML = 'Error de conexión con el servidor. Por favor, revise su red.';
+                    loginAlert.className = 'alert alert-danger';
+                    loginAlert.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error de conexión con el servidor. Por favor, revise su red.';
                     loginAlert.style.display = 'block';
+                } finally {
+                    // Restaurar botón en todos los casos
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 }
+            });
+
+            // Validación en tiempo real del campo de rol
+            document.getElementById('rol').addEventListener('change', function() {
+                if (this.value) {
+                    this.setCustomValidity('');
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.setCustomValidity('Debe seleccionar un tipo de usuario');
+                }
+            });
             });
 
             // Lógica del Modal de Registro
@@ -591,6 +749,215 @@ if (isset($_SESSION['error'])) {
                     confirmPassword.reportValidity(); 
                 }
             });
+
+            // Validación de la CC (solo números)
+            const ccInput = document.getElementById('cc_reg');
+            ccInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                if (this.value.length >= 7 && this.value.length <= 11) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+
+            // Validación del formulario de registro
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevenir envío normal del formulario
+                
+                const cc = document.getElementById('cc_reg').value;
+                
+                // Validar formato de la CC
+                if (!/^\d{7,11}$/.test(cc)) {
+                    alert('La CC debe contener entre 7 y 11 dígitos numéricos');
+                    return;
+                }
+                
+                // Validar que las contraseñas coincidan
+                if (passwordReg.value !== confirmPassword.value) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+                
+                // Enviar formulario via AJAX
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                
+                // Deshabilitar botón durante el envío
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Registrando...';
+                
+                fetch('register_process.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ ' + data.message);
+                        // Cerrar modal y limpiar formulario
+                        document.getElementById('registerModal').querySelector('.btn-close').click();
+                        this.reset();
+                    } else {
+                        alert('❌ ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error de conexión. Por favor, inténtalo nuevamente.');
+                })
+                .finally(() => {
+                    // Rehabilitar botón
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Registrarse';
+                });
+            });
+        });
+    </script>
+    
+    <!-- Theme Switcher Inline -->
+    <script>
+        // Theme Switcher Implementation
+        class ThemeSwitcher {
+            constructor() {
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                this.init();
+            }
+
+            init() {
+                this.applyTheme(this.currentTheme);
+                this.createToggleButton();
+                this.bindEvents();
+            }
+
+            createToggleButton() {
+                const themeToggle = document.createElement('div');
+                themeToggle.className = 'theme-toggle';
+                themeToggle.innerHTML = `
+                    <button class="theme-btn" id="themeToggle" title="Cambiar tema">
+                        <i class="fas fa-sun theme-icon light-icon"></i>
+                        <i class="fas fa-moon theme-icon dark-icon"></i>
+                    </button>
+                `;
+
+                const styles = document.createElement('style');
+                styles.textContent = `
+                    .theme-toggle {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        z-index: 1050;
+                    }
+
+                    .theme-btn {
+                        background: var(--theme-toggle-bg, #fff);
+                        border: 2px solid #e91e63;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .theme-btn:hover {
+                        transform: scale(1.1);
+                        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .theme-icon {
+                        font-size: 1.2rem;
+                        transition: all 0.3s ease;
+                        position: absolute;
+                    }
+
+                    .light-icon {
+                        color: #ffd700;
+                        opacity: 1;
+                        transform: rotate(0deg);
+                    }
+
+                    .dark-icon {
+                        color: #4a90e2;
+                        opacity: 0;
+                        transform: rotate(180deg);
+                    }
+
+                    [data-theme="dark"] .theme-btn {
+                        background: #2d3748;
+                        border-color: #4a90e2;
+                    }
+
+                    [data-theme="dark"] .light-icon {
+                        opacity: 0;
+                        transform: rotate(180deg);
+                    }
+
+                    [data-theme="dark"] .dark-icon {
+                        opacity: 1;
+                        transform: rotate(0deg);
+                    }
+
+                    @media (max-width: 768px) {
+                        .theme-toggle {
+                            top: 10px;
+                            right: 10px;
+                        }
+                        .theme-btn {
+                            width: 45px;
+                            height: 45px;
+                        }
+                    }
+                `;
+
+                document.head.appendChild(styles);
+                document.body.appendChild(themeToggle);
+            }
+
+            bindEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('#themeToggle')) {
+                        this.toggleTheme();
+                    }
+                });
+            }
+
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(this.currentTheme);
+                localStorage.setItem('theme', this.currentTheme);
+                
+                document.body.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    document.body.style.transition = '';
+                }, 300);
+            }
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                this.currentTheme = theme;
+                
+                let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (!metaThemeColor) {
+                    metaThemeColor = document.createElement('meta');
+                    metaThemeColor.name = 'theme-color';
+                    document.head.appendChild(metaThemeColor);
+                }
+                metaThemeColor.content = theme === 'dark' ? '#2d3748' : '#ffffff';
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new ThemeSwitcher();
         });
     </script>
 </body>

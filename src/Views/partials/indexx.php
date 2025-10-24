@@ -14,43 +14,108 @@ include('header.php');
 ?>
 
 <link rel="stylesheet" href="css/index.css">
-<body>
-    <div style="text-align: right; margin: 10px;">
-        <a href="Login/logout.php" style="color: red; font-weight: bold;">Cerrar Sesión</a>
+<link rel="stylesheet" href="assets/css/theme-styles.css">
+<body class="theme-transition">
+    <div class="d-flex justify-content-end p-3">
+        <a href="Login/logout.php" class="btn btn-outline-danger">
+            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+        </a>
     </div>
 
-    <div class="container">
-        <div class="menu_central">
-
-
-            <a href="alta_baja.php">
-                <div class="menu3 menu">
-                    <div class="boton">
-                        <p class="texto_boton">Gestion de Inventario.</p>
+    <div class="container-fluid px-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-5">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Panel de Control
+                </h1>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-3 col-md-6">
+                <a href="alta_baja.php" class="text-decoration-none">
+                    <div class="card menu h-100 shadow-hover">
+                        <div class="card-body text-center">
+                            <i class="fas fa-boxes fa-3x mb-3"></i>
+                            <h5 class="card-title">Gestión de Inventario</h5>
+                            <p class="card-text">Administra tu inventario de productos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
 
-            <a href="pedidos.php">
-                <div class="menu2 menu">
-                    <div class="boton">
-                        <p class="texto_boton">Orden de pedido.</p>
+            <div class="col-lg-3 col-md-6">
+                <a href="pedidos.php" class="text-decoration-none">
+                    <div class="card menu h-100 shadow-hover">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                            <h5 class="card-title">Orden de Pedido</h5>
+                            <p class="card-text">Gestiona las órdenes de pedidos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
 
-            <a href="ventas.php">
-                <div class="menu3 menu">
-                    <div class="boton">
-                        <p class="texto_boton">Ventas.</p>
+            <div class="col-lg-3 col-md-6">
+                <a href="ventas.php" class="text-decoration-none">
+                    <div class="card menu h-100 shadow-hover">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <h5 class="card-title">Ventas</h5>
+                            <p class="card-text">Registra y consulta las ventas</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
 
-            <a href="clientes.php"?>
-                <div class="menu5 menu">
-                    <div class="boton">
-                    <p class="texto_boton">Registro de clientes</p>
+            <div class="col-lg-3 col-md-6">
+                <a href="clientes.php" class="text-decoration-none">
+                    <div class="card menu h-100 shadow-hover">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x mb-3"></i>
+                            <h5 class="card-title">Registro de Clientes</h5>
+                            <p class="card-text">Administra la base de clientes</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Switcher -->
+    <script src="assets/js/theme-switcher.js"></script>
+    
+    <style>
+        .shadow-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .shadow-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-hover) !important;
+        }
+        
+        .card.menu {
+            border: none;
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+        
+        .card.menu:hover {
+            background: var(--menu-hover-bg);
+            color: #ffffff;
+        }
+        
+        .card.menu i {
+            color: var(--primary-color);
+        }
+        
+        .card.menu:hover i {
+            color: #ffffff;
+        }
+    </style>
+</body>
+</html>

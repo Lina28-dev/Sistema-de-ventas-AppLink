@@ -1,140 +1,31 @@
 <?php
-// La sesión ya está iniciada en index.php
+session_start();
+$page_title = "Dashboard";
 
-// Verificar si el usuario está autenticado
+// Verificación de autenticación simple
 if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
     header('Location: /Sistema-de-ventas-AppLink-main/public/');
-    exit;
+    exit();
 }
 
-// Función para mostrar el tipo de usuario
-function getUserType() {
-    if ($_SESSION['is_admin']) return 'Administrador';
-    if ($_SESSION['is_medium']) return 'Usuario Medio';
-    if ($_SESSION['is_visitor']) return 'Visitante';
-    return 'Usuario';
-}
+// Obtener información del usuario
+$user_info = [
+    'id' => $_SESSION['user_id'] ?? null,
+    'nick' => $_SESSION['user_nick'] ?? 'Usuario',
+    'name' => $_SESSION['user_name'] ?? 'Usuario',
+    'role' => $_SESSION['user_role'] ?? 'cliente',
+    'is_admin' => $_SESSION['is_admin'] ?? false
+];
+
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Lilipink</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #FF1493; color: white; }
-        .sidebar .nav-link i { margin-right: 10px; }
-        .main-content { padding: 20px; }
-        .card-stat { border-left: 4px solid #FF1493; }
-        .welcome-card {
-            background: #ffffff;
-            color: #333;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .welcome-card i {
-            font-size: 3rem;
-            margin-right: 20px;
-            color: #FF1493;
-        }
-        .dashboard-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-        .dashboard-title i {
-            margin-right: 15px;
-            color: #FF1493;
-        }
-        .real-time-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #28a745;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-2 d-md-block sidebar">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/logo.jpg" alt="logo" class="img-fluid mb-2" style="max-height:80px;object-fit:contain;">
-                    </div>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="dashboard">
-                                <i class="fas fa-home"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="clientes">
-                                <i class="fas fa-users"></i> Clientes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pedidos">
-                                <i class="fas fa-shopping-cart"></i> Pedidos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="ventas">
-                                <i class="fas fa-cash-register"></i> Ventas
-                            </a>
-                        </li>
-                        <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="usuarios">
-                                <i class="fas fa-user-cog"></i> Usuarios
-                            </a>
-                        </li>
-                        <?php endif; ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="reportes">
-                                <i class="fas fa-chart-bar"></i> Reportes
-                            </a>
-                        </li>
-                        <li class="nav-item mt-3 pt-3 border-top">
-                            <a class="nav-link" href="perfil">
-                                <i class="fas fa-user"></i> Mi Perfil
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../Auth/logout.php">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
 
-            <!-- Main content -->
-            <main class="col-md-10 ms-sm-auto px-4 main-content">
+<div class="container-fluid">
+    <div class="row">
+        <?php include __DIR__ . '/includes/sidebar.php'; ?>
+        
+        <!-- Main content -->
+        <main class="main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <div class="dashboard-title">
                         <i class="fas fa-home"></i>
@@ -170,10 +61,24 @@ function getUserType() {
                     <!-- Pestaña Resumen -->
                     <div class="tab-pane fade show active" id="resumen" role="tabpanel">
                         <div class="welcome-card mb-4">
-                            <i class="fas fa-user-circle"></i>
+                            <i class="<?php echo getUserIcon(); ?>"></i>
                             <div>
                                 <h4 class="mb-1">Bienvenido/a, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h4>
-                                <p class="mb-0">Tipo de usuario: <?php echo getUserType(); ?></p>
+                                <p class="mb-2">Rol: <strong><?php echo getUserType(); ?></strong></p>
+                                <?php
+                                // Mostrar mensaje específico según el rol
+                                switch ($user_role) {
+                                    case 'administrador':
+                                        echo '<p class="mb-0 text-warning"><i class="fas fa-star me-1"></i>Tienes acceso completo al sistema</p>';
+                                        break;
+                                    case 'empleado':
+                                        echo '<p class="mb-0 text-info"><i class="fas fa-briefcase me-1"></i>Acceso a pedidos y ventas</p>';
+                                        break;
+                                    case 'cliente':
+                                        echo '<p class="mb-0 text-primary"><i class="fas fa-shopping-bag me-1"></i>Gestiona tus pedidos</p>';
+                                        break;
+                                }
+                                ?>
                             </div>
                         </div>
 
@@ -601,7 +506,146 @@ function getUserType() {
             return `Hace ${diffDays} días`;
         }
     </script>
-</body>
-</html>
-</body>
-</html>
+    
+    <!-- Theme Switcher Inline -->
+    <script>
+        // Theme Switcher Implementation
+        class ThemeSwitcher {
+            constructor() {
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                this.init();
+            }
+
+            init() {
+                this.applyTheme(this.currentTheme);
+                this.createToggleButton();
+                this.bindEvents();
+            }
+
+            createToggleButton() {
+                const themeToggle = document.createElement('div');
+                themeToggle.className = 'theme-toggle';
+                themeToggle.innerHTML = `
+                    <button class="theme-btn" id="themeToggle" title="Cambiar tema">
+                        <i class="fas fa-sun theme-icon light-icon"></i>
+                        <i class="fas fa-moon theme-icon dark-icon"></i>
+                    </button>
+                `;
+
+                const styles = document.createElement('style');
+                styles.textContent = `
+                    .theme-toggle {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        z-index: 1050;
+                    }
+
+                    .theme-btn {
+                        background: var(--theme-toggle-bg, #fff);
+                        border: 2px solid #e91e63;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .theme-btn:hover {
+                        transform: scale(1.1);
+                        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .theme-icon {
+                        font-size: 1.2rem;
+                        transition: all 0.3s ease;
+                        position: absolute;
+                    }
+
+                    .light-icon {
+                        color: #ffd700;
+                        opacity: 1;
+                        transform: rotate(0deg);
+                    }
+
+                    .dark-icon {
+                        color: #4a90e2;
+                        opacity: 0;
+                        transform: rotate(180deg);
+                    }
+
+                    [data-theme="dark"] .theme-btn {
+                        background: #2d3748;
+                        border-color: #4a90e2;
+                    }
+
+                    [data-theme="dark"] .light-icon {
+                        opacity: 0;
+                        transform: rotate(180deg);
+                    }
+
+                    [data-theme="dark"] .dark-icon {
+                        opacity: 1;
+                        transform: rotate(0deg);
+                    }
+
+                    @media (max-width: 768px) {
+                        .theme-toggle {
+                            top: 10px;
+                            right: 10px;
+                        }
+                        .theme-btn {
+                            width: 45px;
+                            height: 45px;
+                        }
+                    }
+                `;
+
+                document.head.appendChild(styles);
+                document.body.appendChild(themeToggle);
+            }
+
+            bindEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('#themeToggle')) {
+                        this.toggleTheme();
+                    }
+                });
+            }
+
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(this.currentTheme);
+                localStorage.setItem('theme', this.currentTheme);
+                
+                document.body.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    document.body.style.transition = '';
+                }, 300);
+            }
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                this.currentTheme = theme;
+                
+                let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (!metaThemeColor) {
+                    metaThemeColor = document.createElement('meta');
+                    metaThemeColor.name = 'theme-color';
+                    document.head.appendChild(metaThemeColor);
+                }
+                metaThemeColor.content = theme === 'dark' ? '#2d3748' : '#ffffff';
+            }
+        }
+
+        </main>
+    </div>
+</div>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

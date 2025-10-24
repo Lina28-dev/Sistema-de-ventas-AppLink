@@ -1,24 +1,224 @@
-<php
-if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    header("Location: /Sistema-de-ventas-AppLink-main/public/");
-    exit();
-}
+<?php
+session_start();
+$page_title = "Gestión de Ventas";
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ventas - Lilipink</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
-        .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
+
+<div class="container-fluid">
+    <div class="row">
+        <?php include __DIR__ . '/includes/sidebar.php'; ?>
+        
+        <!-- Main content -->
+        <main class="main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div class="page-title">
+                    <i class="fas fa-chart-line"></i>
+                    Gestión de Ventas
+                </div>
+                <div class="text-muted">
+                    <i class="far fa-clock"></i>
+                    <span id="fechaHoraVentas"><?php date_default_timezone_set('America/Bogota'); echo date('d/m/Y H:i:s'); ?></span>
+                </div>
+            </div>
+
+            <!-- Estadísticas de Ventas -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card card-stat">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Ventas Hoy</h6>
+                                    <h3 class="text-success">$1,250,000</h3>
+                                    <small class="text-success"><i class="fas fa-arrow-up"></i> +15% vs ayer</small>
+                                </div>
+                                <div class="real-time-indicator" title="Datos en tiempo real"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-stat">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Ventas del Mes</h6>
+                                    <h3 class="text-primary">$28,750,000</h3>
+                                    <small class="text-success"><i class="fas fa-arrow-up"></i> +8% vs mes anterior</small>
+                                </div>
+                                <div class="real-time-indicator" title="Datos en tiempo real"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-stat">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Transacciones</h6>
+                                    <h3 class="text-info">847</h3>
+                                    <small class="text-muted">Total del mes</small>
+                                </div>
+                                <div class="real-time-indicator" title="Datos en tiempo real"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-stat">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">Ticket Promedio</h6>
+                                    <h3 class="text-warning">$147,500</h3>
+                                    <small class="text-info"><i class="fas fa-info-circle"></i> Promedio por venta</small>
+                                </div>
+                                <div class="real-time-indicator" title="Datos en tiempo real"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones de Ventas -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-plus-circle"></i> Nueva Venta</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary btn-lg w-100 mb-3">
+                                        <i class="fas fa-cash-register me-2"></i>
+                                        Registrar Venta
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success btn-lg w-100 mb-3">
+                                        <i class="fas fa-search me-2"></i>
+                                        Consultar Ventas
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-info btn-lg w-100 mb-3">
+                                        <i class="fas fa-chart-bar me-2"></i>
+                                        Reportes de Ventas
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Ventas Recientes -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-list"></i> Ventas Recientes</h5>
+                            <span class="badge bg-success">LIVE <span class="real-time-indicator"></span></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fecha</th>
+                                            <th>Cliente</th>
+                                            <th>Productos</th>
+                                            <th>Total</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>001</td>
+                                            <td>23/10/2025 14:30</td>
+                                            <td>María González</td>
+                                            <td>3 productos</td>
+                                            <td class="text-success fw-bold">$250,000</td>
+                                            <td><span class="badge bg-success">Completada</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                    <i class="fas fa-print"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>002</td>
+                                            <td>23/10/2025 13:15</td>
+                                            <td>Carlos López</td>
+                                            <td>2 productos</td>
+                                            <td class="text-success fw-bold">$180,000</td>
+                                            <td><span class="badge bg-success">Completada</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                    <i class="fas fa-print"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>003</td>
+                                            <td>23/10/2025 12:45</td>
+                                            <td>Ana Martínez</td>
+                                            <td>5 productos</td>
+                                            <td class="text-success fw-bold">$420,000</td>
+                                            <td><span class="badge bg-warning">Pendiente</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                    <i class="fas fa-print"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Actualizar fecha y hora cada segundo
+    function updateDateTime() {
+        const now = new Date();
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        const dateTimeString = now.toLocaleDateString('es-CO', options).replace(',', '');
+        const dateTimeElement = document.getElementById('fechaHoraVentas');
+        if (dateTimeElement) {
+            dateTimeElement.textContent = dateTimeString;
+        }
+    }
+    
+    setInterval(updateDateTime, 1000);
+</script>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
         .btn-pink:hover { background-color: #FF69B4; color: white; }
         .product-card { cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
         .product-card:hover { border-color: #FF1493; transform: scale(1.05); }

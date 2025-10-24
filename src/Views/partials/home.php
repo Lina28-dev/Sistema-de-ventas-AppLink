@@ -17,6 +17,8 @@ if (isset($_SESSION['usuario_nombre'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="assets/css/theme-styles.css">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
     <!-- Navbar -->
@@ -158,7 +160,7 @@ if (isset($_SESSION['usuario_nombre'])) {
                         </div>
                     </div>
 
-                    <form id="registerForm" action="register.php" method="POST" class="needs-validation" novalidate>
+                    <form id="registerForm" action="register_process.php" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="cliente">
                         
                         <div class="row">
@@ -186,6 +188,15 @@ if (isset($_SESSION['usuario_nombre'])) {
                                 <label for="telefono" class="form-label">Teléfono</label>
                                 <input type="tel" class="form-control" id="telefono" name="telefono" required>
                                 <div class="invalid-feedback">Por favor ingrese un teléfono válido</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cc" class="form-label">Cédula de Ciudadanía (CC)</label>
+                                <input type="text" class="form-control" id="cc" name="cc" required pattern="[0-9]{7,11}" maxlength="20"
+                                       title="Debe contener entre 7 y 11 dígitos numéricos">
+                                <div class="invalid-feedback">La CC debe contener entre 7 y 11 dígitos numéricos</div>
                             </div>
                         </div>
 
@@ -246,6 +257,7 @@ if (isset($_SESSION['usuario_nombre'])) {
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/theme-switcher.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {

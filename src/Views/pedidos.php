@@ -1,34 +1,15 @@
 <?php
-if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    header("Location: /Sistema-de-ventas-AppLink-main/public/");
-    exit();
-}
+session_start();
+$page_title = "Gestión de Pedidos";
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos - Lilipink</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
-        .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
-        .btn-pink:hover { background-color: #FF69B4; color: white; }
-        .product-card { cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
-        .product-card:hover { border-color: #FF1493; transform: scale(1.05); }
-        .badge-pendiente { background-color: #ffc107; }
-        .badge-proceso { background-color: #17a2b8; }
-        .badge-entregado { background-color: #28a745; }
-        .badge-cancelado { background-color: #dc3545; }
-    </style>
-</head>
-<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <?php include __DIR__ . '/includes/sidebar.php'; ?>
+        
+        <!-- Main content -->
+        <main class="main-content">
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->

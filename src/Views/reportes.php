@@ -1,14 +1,15 @@
 <?php
-// La sesión ya está iniciada en index.php
-
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    header('Location: /Sistema-de-ventas-AppLink-main/public/');
-    exit;
-}
+session_start();
+$page_title = "Reportes";
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
+
+<div class="container-fluid">
+    <div class="row">
+        <?php include __DIR__ . '/includes/sidebar.php'; ?>
+        
+        <!-- Main content -->
+        <main class="main-content">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
