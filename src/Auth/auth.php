@@ -48,33 +48,25 @@ try {
     
     $debug_log[] = "Rol válido: " . $selected_role;
     
-    // Conexión a la base de datos
-    $debug_log[] = "Intentando conexión a base de datos";
-    
-    // Cargar configuración
-    $config = require __DIR__ . '/../../config/app.php';
+    // Conexión a la base de datos MySQL (XAMPP)
+    $debug_log[] = "Intentando conexión a MySQL";
     
     try {
-        // Intentar MySQL primero (para compatibilidad)
+        // Conexión directa a MySQL para XAMPP
         $conn = new mysqli('localhost', 'root', '', 'fs_clientes');
+        
         if ($conn->connect_error) {
-            $debug_log[] = "MySQL no disponible, intentando PostgreSQL";
-            
-            // Usar configuración PostgreSQL
-            $dsn = "pgsql:host={$config['db']['host']};port={$config['db']['port']};dbname={$config['db']['name']}";
-            $pdo = new PDO($dsn, $config['db']['user'], $config['db']['pass'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
-            $using_postgresql = true;
-            $debug_log[] = "Conexión PostgreSQL exitosa";
-        } else {
-            $using_postgresql = false;
-            $debug_log[] = "Conexión MySQL exitosa";
+            $debug_log[] = "Error MySQL: " . $conn->connect_error;
+            throw new Exception("Error de conexión: " . $conn->connect_error);
         }
+        
+        // Configurar charset
+        $conn->set_charset("utf8mb4");
+        $debug_log[] = "Conexión MySQL exitosa";
+        
     } catch (Exception $db_error) {
         $debug_log[] = "Error de conexión: " . $db_error->getMessage();
-        throw new Exception("Error de conexión a la base de datos");
+        throw new Exception("Error de conexión. Verifique que MySQL esté ejecutándose en XAMPP.");
     }
     
     $debug_log[] = "Conexión exitosa a la base de datos";
@@ -85,40 +77,29 @@ try {
     
     $debug_log[] = "Buscando usuario: " . $nick;
     
-    if (isset($using_postgresql) && $using_postgresql) {
-        // PostgreSQL
-        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE nick = :nick OR usuario = :nick");
-        $stmt->bindParam(':nick', $nick);
-        $stmt->execute();
-        $user = $stmt->fetch();
-        
-        if (!$user) {
-            $debug_log[] = "Usuario no encontrado en PostgreSQL";
-            throw new Exception('Usuario no encontrado');
-        }
-    } else {
-        // MySQL
-        $nick_escaped = $conn->real_escape_string($nick);
-        $sql = "SELECT * FROM fs_usuarios WHERE nick = '$nick_escaped'";
-        $result = $conn->query($sql);
-        
-        if (!$result) {
-            $debug_log[] = "Error en consulta SQL: " . $conn->error;
-            throw new Exception('Error en la consulta de base de datos');
-        }
-        
-        if ($result->num_rows === 0) {
-            $debug_log[] = "Usuario no encontrado en MySQL";
-            throw new Exception('Usuario no encontrado');
-        }
-        
-        $user_id = isset($user['id_usuario']) ? $user['id_usuario'] : $user['id'];
+    // Buscar usuario en MySQL
+    $nick_escaped = $conn->real_escape_string($nick);
+    $sql = "SELECT * FROM fs_usuarios WHERE nick = '$nick_escaped'";
+    $result = $conn->query($sql);
+    
+    if (!$result) {
+        $debug_log[] = "Error en consulta SQL: " . $conn->error;
+        throw new Exception('Error en la consulta de base de datos');
     }
+    
+    if ($result->num_rows === 0) {
+        $debug_log[] = "Usuario no encontrado en MySQL";
+        throw new Exception('Usuario no encontrado');
+    }
+    
+    $user = $result->fetch_assoc();
+    $user_id = $user['id_usuario'];
+    
     $debug_log[] = "Usuario encontrado - ID: " . $user_id;
     
     // Verificar contraseña
     $debug_log[] = "Verificando contraseña";
-    $stored_password = $user['password'] ?? $user['contrasena'];
+    $stored_password = $user['password'];
     
     if (!password_verify($password, $stored_password)) {
         // También verificar si la contraseña está en texto plano (para compatibilidad)
@@ -126,10 +107,10 @@ try {
             $debug_log[] = "Contraseña incorrecta";
             throw new Exception('Contraseña incorrecta');
         } else {
-            $debug_log[] = "Contraseña en texto plano detectada";
+            $debug_log[] = "Contraseña correcta (texto plano - se recomienda actualizar)";
         }
     } else {
-        $debug_log[] = "Contraseña verificada correctamente (hash)";
+        $debug_log[] = "Contraseña correcta (hash)";
     }
     
     // Determinar rol del usuario

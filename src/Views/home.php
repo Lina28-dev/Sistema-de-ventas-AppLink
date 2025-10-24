@@ -13,12 +13,20 @@ if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) {
     exit();
 }
 
-// 3. Manejo de Errores de Login
+// 3. Manejo de Mensajes (Errores y Éxito)
 $login_error = null;
+$logout_success = null;
+
 if (isset($_SESSION['error'])) {
     // Usamos htmlspecialchars() para prevenir XSS al mostrar el error
     $login_error = htmlspecialchars($_SESSION['error']);
     unset($_SESSION['error']); // Limpiamos la variable de sesión después de obtenerla
+}
+
+if (isset($_SESSION['logout_success'])) {
+    // Mensaje de logout exitoso
+    $logout_success = htmlspecialchars($_SESSION['logout_success']);
+    unset($_SESSION['logout_success']); // Limpiamos la variable de sesión después de obtenerla
 }
 ?>
 <!DOCTYPE html>
@@ -32,6 +40,7 @@ if (isset($_SESSION['error'])) {
     <link rel="stylesheet" href="assets/css/theme-styles.css">
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/theme-system.css">
 
     <style>
         /* Definición de Variables CSS para fácil mantenimiento de marca */
@@ -458,6 +467,11 @@ if (isset($_SESSION['error'])) {
                             style="display: <?php echo $login_error ? 'block' : 'none'; ?>">
                             <?php echo $login_error; ?>
                         </div>
+                        
+                        <div class="alert alert-success mt-3" id="logoutAlert" 
+                            style="display: <?php echo $logout_success ? 'block' : 'none'; ?>">
+                            <i class="fas fa-check-circle me-2"></i><?php echo $logout_success; ?>
+                        </div>
 
                         <div class="text-center mt-3">
                             <a href="reset_password.php" class="text-muted">¿Olvidaste tu contraseña?</a>
@@ -602,6 +616,7 @@ if (isset($_SESSION['error'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/login-handler.js"></script>
+    <script src="js/theme-system.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -19,41 +19,115 @@ function getUserType() {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Dashboard - Gestor de Ventas Lilipink</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Sidebar CSS -->
     <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
+    <!-- Sistema de Temas -->
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/theme-system.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        body { 
+            background-color: #f8f9fa; 
+            font-size: 0.875rem;
+        }
         .main-content { padding: 20px; }
         .card-stat { border-left: 4px solid #FF1493; }
         .welcome-card {
             background: #ffffffff;
-            color: black
-            padding: 20px;
+            color: black;
+            padding: 18px;
             border-radius: 10px;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
         }
         .welcome-card i {
-            font-size: 3rem;
-            margin-right: 20px;
+            font-size: 2.5rem;
+            margin-right: 16px;
         }
         .dashboard-title {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 600;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
         }
+        .card-body h6 {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .card-body h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 0 !important;
+            }
+            
+            .dashboard-title {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+            
+            .welcome-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .welcome-card i {
+                font-size: 2rem;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .card-body h3 {
+                font-size: 1.25rem;
+            }
+            
+            .row .col-md-3 {
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-title {
+                font-size: 1.25rem;
+            }
+            
+            .card-body h3 {
+                font-size: 1.1rem;
+            }
+            
+            .welcome-card {
+                padding: 12px;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Botón toggle para móviles -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->
@@ -94,6 +168,7 @@ function getUserType() {
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Sistema-de-ventas-AppLink-main/public/js/theme-system.js"></script>
     <!-- Toasts y tooltips -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="dashboardToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -106,18 +181,39 @@ function getUserType() {
         </div>
     </div>
     <script>
-        // Mostrar toast de ejemplo al cargar
-        window.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar en móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                // Cerrar sidebar al hacer click fuera en móviles
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Mostrar toast de ejemplo al cargar
             var toastEl = document.getElementById('dashboardToast');
             if (toastEl) {
                 var toast = new bootstrap.Toast(toastEl);
                 toast.show();
             }
+            
             // Inicializar tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                 new bootstrap.Tooltip(tooltipTriggerEl);
             });
+            
             // Confirmación al cerrar sesión
             var logoutLink = document.querySelector('a[href$="logout"]');
             if (logoutLink) {

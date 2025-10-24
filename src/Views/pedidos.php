@@ -8,25 +8,124 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Pedidos - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/theme-system.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-size: 0.875rem;
+        }
         .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
+        .btn-pink { 
+            background-color: #FF1493; 
+            border-color: #FF1493; 
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
-        .product-card { cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .product-card { 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            border: 2px solid transparent;
+        }
         .product-card:hover { border-color: #FF1493; transform: scale(1.05); }
         .badge-pendiente { background-color: #ffc107; }
         .badge-proceso { background-color: #17a2b8; }
         .badge-entregado { background-color: #28a745; }
         .badge-cancelado { background-color: #dc3545; }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        .table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .table td {
+            font-size: 0.8rem;
+        }
+        .card-body h6 {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .card-body h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 0 !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+            
+            .card-body h3 {
+                font-size: 1.1rem;
+            }
+            
+            .row .col-md-3 {
+                margin-bottom: 15px;
+            }
+            
+            .table {
+                font-size: 0.75rem;
+            }
+            
+            .btn-pink {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+            
+            .product-card:hover {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .card {
+                margin-bottom: 10px;
+            }
+            
+            .table {
+                font-size: 0.7rem;
+            }
+            
+            .btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Botón toggle para móviles -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->
@@ -62,7 +161,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(1, 'Panty Invisible Cl�sico', 24990, 15)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Cl�sico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Panty Invisible Cl�sico</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433250012</p>
                                                         <h5 class="text-success">$24.990</h5>
@@ -73,7 +172,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(2, 'Brasier Push Up Encaje', 59990, 8)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/brasier-pushup.jpg" alt="Brasier Push Up Encaje" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/brasier-pushup.jpg" alt="Brasier Push Up Encaje" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Braiser Push Up Encaje</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433240013</p>
                                                         <h5 class="text-success">$59.990</h5>
@@ -84,7 +183,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(3, 'Pijama Short Algod�n', 79990, 5)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algod�n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Pijama Short Algod�n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433230014</p>
                                                         <h5 class="text-success">$79.990</h5>
@@ -95,7 +194,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(4, 'Camiseta Manga Corta', 29990, 12)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/camiseta-mc.jpg" alt="Camiseta Manga Corta" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/camiseta-mc.jpg" alt="Camiseta Manga Corta" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Camiseta Manga Corta</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433220015</p>
                                                         <h5 class="text-success">$29.990</h5>
@@ -106,7 +205,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(5, 'B�xer Algod�n', 19990, 20)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="B�xer Algod�n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>B�xer Algod�n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433210016</p>
                                                         <h5 class="text-success">$19.990</h5>
@@ -117,7 +216,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <div class="col-md-4 mb-3">
                                                 <div class="card product-card" onclick="agregarAlPedido(6, 'Medias Tobilleras', 9990, 30)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/medias-tobilleras.jpg" alt="Medias Tobilleras" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/medias-tobilleras.jpg" alt="Medias Tobilleras" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
                                                         <h6>Medias Tobilleras</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433200017</p>
                                                         <h5 class="text-success">$9.990</h5>
@@ -215,6 +314,44 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Sistema-de-ventas-AppLink-main/public/js/theme-system.js"></script>
+    <script>
+        // Toggle sidebar en móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Confirmación al cerrar sesión
+            var logoutLink = document.querySelector('a[href$="logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    if (!confirm('¿Seguro que deseas cerrar sesión?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
     <script>
         let pedidoActual = [];
         let pedidos = [];

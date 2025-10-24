@@ -1,14 +1,14 @@
 <?php
 return [
-    // Database Configuration - PostgreSQL
+    // Database Configuration - MySQL (para XAMPP)
     'db' => [
-        'driver' => 'pgsql',
+        'driver' => 'mysql',
         'host' => $_ENV['DB_HOST'] ?? 'localhost',
-        'port' => $_ENV['DB_PORT'] ?? '5432',
-        'user' => $_ENV['DB_USER'] ?? 'applink_user',
-        'pass' => $_ENV['DB_PASS'] ?? 'applink_2024!',
-        'name' => $_ENV['DB_NAME'] ?? 'ventas_applink',
-        'charset' => 'utf8'
+        'port' => $_ENV['DB_PORT'] ?? '3306',
+        'user' => $_ENV['DB_USER'] ?? 'root',
+        'pass' => $_ENV['DB_PASS'] ?? '',
+        'name' => $_ENV['DB_NAME'] ?? 'fs_clientes',
+        'charset' => 'utf8mb4'
     ],
 
     // Application Configuration

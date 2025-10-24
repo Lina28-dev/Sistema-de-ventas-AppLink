@@ -42,16 +42,30 @@ try {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Usuarios - Sistema de Ventas AppLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/theme-system.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-size: 0.875rem;
+        }
         .main-content { padding: 20px; }
         .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
+        .btn-pink { 
+            background-color: #FF1493; 
+            border-color: #FF1493; 
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
         .btn-pink:hover { background-color: #DC143C; border-color: #DC143C; color: white; }
         .text-pink { color: #FF1493; }
         
@@ -67,12 +81,18 @@ try {
             font-weight: 600;
             color: #495057;
             background-color: #f8f9fa;
+            font-size: 0.75rem;
+        }
+        
+        .table td {
+            font-size: 0.8rem;
         }
         
         .nav-tabs .nav-link {
             border: none;
             color: #6c757d;
             font-weight: 500;
+            font-size: 0.85rem;
         }
         
         .nav-tabs .nav-link.active {
@@ -85,9 +105,91 @@ try {
             border-color: transparent;
             color: #FF1493;
         }
+        
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        .card-body h6 {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .fs-2 {
+            font-size: 1.5rem !important;
+            font-weight: 600;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 0 !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+            
+            .fs-2 {
+                font-size: 1.25rem !important;
+            }
+            
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-pink {
+                width: 100%;
+            }
+            
+            .table-responsive {
+                font-size: 0.75rem;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            
+            .row .col-md-3, .row .col-md-6 {
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .card {
+                margin-bottom: 10px;
+            }
+            
+            .table {
+                font-size: 0.7rem;
+            }
+            
+            .btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Botón toggle para móviles -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->
@@ -274,131 +376,283 @@ try {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Sistema-de-ventas-AppLink-main/public/js/theme-system.js"></script>
     <script>
-        // Cargar usuarios desde PHP
+        // Variables globales
         let usuarios = <?php echo json_encode($usuarios); ?>;
         let usuarioEditando = null;
+        
+        // URL base para API
+        const API_URL = '/Sistema-de-ventas-AppLink-main/src/Controllers/UsuarioController.php?api=1';
+        
+        // Event listener para el formulario
         document.getElementById('formUsuario').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const nombre = document.getElementById('nombreUsuario').value.trim();
             const apellido = document.getElementById('apellidoUsuario').value.trim();
-            const usuario = document.getElementById('usuarioUsuario').value.trim();
+            const nick = document.getElementById('usuarioUsuario').value.trim();
             const email = document.getElementById('emailUsuario').value.trim();
             const rol = document.getElementById('rolUsuario').value;
-            if (!nombre || !apellido || !usuario || !email || !rol) {
+            
+            if (!nombre || !apellido || !nick || !email || !rol) {
                 mostrarToast('Completa todos los campos', 'danger');
                 return;
             }
+            
             if (!validarEmail(email)) {
                 mostrarToast('Email no válido', 'danger');
                 return;
             }
-            const nuevoUsuario = {
-                id: usuarioEditando ? usuarioEditando.id : usuarios.length + 1,
-                nombre,
-                apellido,
-                usuario,
-                email,
-                rol
-            };
+            
+            const datos = { nombre, apellido, nick, email, rol };
+            
             if (usuarioEditando) {
-                const idx = usuarios.findIndex(u => u.id === usuarioEditando.id);
-                usuarios[idx] = nuevoUsuario;
-                usuarioEditando = null;
-                mostrarToast('Usuario actualizado', 'success');
+                datos.id = usuarioEditando.id_usuario;
+                actualizarUsuario(datos);
             } else {
-                usuarios.push(nuevoUsuario);
-                mostrarToast('Usuario registrado', 'success');
+                crearUsuario(datos);
             }
-            limpiarFormulario();
-            actualizarTablaUsuarios();
         });
+        
+        // Función para crear usuario
+        async function crearUsuario(datos) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos)
+                });
+                
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    mostrarToast(resultado.message, 'success');
+                    limpiarFormulario();
+                    await cargarUsuarios();
+                    // Cambiar a la pestaña de lista
+                    var tab = new bootstrap.Tab(document.getElementById('lista-tab'));
+                    tab.show();
+                } else {
+                    mostrarToast(resultado.error || 'Error al crear usuario', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión', 'danger');
+            }
+        }
+        
+        // Función para actualizar usuario
+        async function actualizarUsuario(datos) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos)
+                });
+                
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    mostrarToast(resultado.message, 'success');
+                    limpiarFormulario();
+                    await cargarUsuarios();
+                    // Cambiar a la pestaña de lista
+                    var tab = new bootstrap.Tab(document.getElementById('lista-tab'));
+                    tab.show();
+                } else {
+                    mostrarToast(resultado.error || 'Error al actualizar usuario', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión', 'danger');
+            }
+        }
+        
+        // Función para eliminar usuario
+        async function eliminarUsuario(id) {
+            if (!confirm('¿Seguro que deseas eliminar este usuario?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id })
+                });
+                
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    mostrarToast(resultado.message, 'success');
+                    await cargarUsuarios();
+                } else {
+                    mostrarToast(resultado.error || 'Error al eliminar usuario', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión', 'danger');
+            }
+        }
+        
+        // Función para cargar usuarios desde la API
+        async function cargarUsuarios() {
+            try {
+                const response = await fetch(API_URL);
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    usuarios = resultado.usuarios;
+                    actualizarTablaUsuarios();
+                    actualizarMetricas();
+                } else {
+                    mostrarToast('Error al cargar usuarios', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión', 'danger');
+            }
+        }
+        
+        // Función para actualizar la tabla de usuarios
         function actualizarTablaUsuarios() {
             const tbody = document.getElementById('tablaUsuarios');
+            
             if (usuarios.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay usuarios registrados</td></tr>';
             } else {
-                tbody.innerHTML = usuarios.map(u => `<tr>
-                    <td>${u.id}</td>
-                    <td>${u.nombre}</td>
-                    <td>${u.apellido}</td>
-                    <td>${u.usuario}</td>
-                    <td>${u.email}</td>
-                    <td><span class="badge bg-${u.rol === 'admin' ? 'primary' : 'secondary'}">${u.rol === 'admin' ? 'Administrador' : 'Usuario'}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="editarUsuario(${u.id})" data-bs-toggle="tooltip" title="Editar usuario"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${u.id})" data-bs-toggle="tooltip" title="Eliminar usuario"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`).join('');
+                tbody.innerHTML = usuarios.map(u => `
+                    <tr>
+                        <td>${u.id_usuario}</td>
+                        <td>${u.nombre}</td>
+                        <td>${u.apellido}</td>
+                        <td>${u.nick}</td>
+                        <td>${u.email}</td>
+                        <td>
+                            ${u.is_admin ? '<span class="badge bg-primary">Administrador</span>' : '<span class="badge bg-secondary">Usuario</span>'}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="editarUsuario(${u.id_usuario})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminarUsuario(${u.id_usuario})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
             }
         }
+        
+        // Función para editar usuario
         function editarUsuario(id) {
-            const usuario = usuarios.find(u => u.id === id);
+            const usuario = usuarios.find(u => u.id_usuario === id);
             if (usuario) {
                 usuarioEditando = usuario;
                 document.getElementById('nombreUsuario').value = usuario.nombre;
                 document.getElementById('apellidoUsuario').value = usuario.apellido;
-                document.getElementById('usuarioUsuario').value = usuario.usuario;
+                document.getElementById('usuarioUsuario').value = usuario.nick;
                 document.getElementById('emailUsuario').value = usuario.email;
-                document.getElementById('rolUsuario').value = usuario.rol;
+                document.getElementById('rolUsuario').value = usuario.is_admin ? 'admin' : 'user';
+                
                 mostrarToast('Editando usuario', 'info');
-                // Cambia a la pestaña de edición
+                // Cambiar a la pestaña de edición
                 var tab = new bootstrap.Tab(document.getElementById('nuevo-tab'));
                 tab.show();
             }
         }
-        function eliminarUsuario(id) {
-            if (confirm('¿Seguro que deseas eliminar este usuario?')) {
-                usuarios = usuarios.filter(u => u.id !== id);
-                actualizarTablaUsuarios();
-                mostrarToast('Usuario eliminado', 'success');
-            }
-        }
+        
+        // Función para limpiar formulario
         function limpiarFormulario() {
             document.getElementById('formUsuario').reset();
             usuarioEditando = null;
         }
+        
+        // Función para actualizar métricas
+        function actualizarMetricas() {
+            const totalUsuarios = usuarios.length;
+            const administradores = usuarios.filter(u => u.is_admin).length;
+            const usuariosRegulares = usuarios.filter(u => !u.is_admin).length;
+            
+            // Actualizar las métricas en las cards
+            const metricas = document.querySelectorAll('.fs-2.fw-bold.text-pink');
+            if (metricas.length >= 4) {
+                metricas[0].textContent = totalUsuarios;
+                metricas[1].textContent = administradores;
+                metricas[2].textContent = usuariosRegulares;
+                metricas[3].textContent = totalUsuarios; // Activos
+            }
+        }
+        
+        // Función para buscar usuario
         function buscarUsuario() {
             const termino = document.getElementById('buscarUsuario').value.toLowerCase();
             const filtrados = usuarios.filter(u =>
                 u.nombre.toLowerCase().includes(termino) ||
                 u.apellido.toLowerCase().includes(termino) ||
-                u.usuario.toLowerCase().includes(termino) ||
+                u.nick.toLowerCase().includes(termino) ||
                 u.email.toLowerCase().includes(termino)
             );
             mostrarUsuariosFiltrados(filtrados);
         }
+        
+        // Función para mostrar usuarios filtrados
         function mostrarUsuariosFiltrados(filtrados) {
             const tbody = document.getElementById('tablaUsuarios');
+            
             if (filtrados.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No se encontraron usuarios</td></tr>';
             } else {
-                tbody.innerHTML = filtrados.map(u => `<tr>
-                    <td>${u.id}</td>
-                    <td>${u.nombre}</td>
-                    <td>${u.apellido}</td>
-                    <td>${u.usuario}</td>
-                    <td>${u.email}</td>
-                    <td><span class="badge bg-${u.rol === 'admin' ? 'primary' : 'secondary'}">${u.rol === 'admin' ? 'Administrador' : 'Usuario'}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="editarUsuario(${u.id})" data-bs-toggle="tooltip" title="Editar usuario"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${u.id})" data-bs-toggle="tooltip" title="Eliminar usuario"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`).join('');
+                tbody.innerHTML = filtrados.map(u => `
+                    <tr>
+                        <td>${u.id_usuario}</td>
+                        <td>${u.nombre}</td>
+                        <td>${u.apellido}</td>
+                        <td>${u.nick}</td>
+                        <td>${u.email}</td>
+                        <td>
+                            ${u.is_admin ? '<span class="badge bg-primary">Administrador</span>' : '<span class="badge bg-secondary">Usuario</span>'}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="editarUsuario(${u.id_usuario})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminarUsuario(${u.id_usuario})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
             }
         }
+        
+        // Función para filtrar por rol
         function filtrarPorRol() {
             const rol = document.getElementById('filtroRol').value;
             let filtrados = usuarios;
-            if (rol) {
-                filtrados = usuarios.filter(u => u.rol === rol);
+            
+            if (rol === 'admin') {
+                filtrados = usuarios.filter(u => u.is_admin);
+            } else if (rol === 'user') {
+                filtrados = usuarios.filter(u => !u.is_admin);
             }
+            
             mostrarUsuariosFiltrados(filtrados);
         }
+        
+        // Función para validar email
         function validarEmail(email) {
             return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
         }
-        // Toast dinámico
+        
+        // Función para mostrar toast
         function mostrarToast(mensaje, tipo) {
             var toastEl = document.getElementById('usuariosToast');
             if (toastEl) {
@@ -408,13 +662,34 @@ try {
                 toast.show();
             }
         }
-        // Inicializar tooltips y confirmación logout
+        
+        // Inicialización
         window.addEventListener('DOMContentLoaded', function() {
-            actualizarTablaUsuarios();
+            // Toggle sidebar en móviles
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Inicializar tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                 new bootstrap.Tooltip(tooltipTriggerEl);
             });
+            
+            // Confirmación logout
             var logoutLink = document.querySelector('a[href$="logout"]');
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
@@ -423,6 +698,10 @@ try {
                     }
                 });
             }
+            
+            // Cargar datos iniciales
+            actualizarTablaUsuarios();
+            actualizarMetricas();
         });
     </script>
 </body>

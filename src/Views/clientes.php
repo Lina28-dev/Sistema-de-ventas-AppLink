@@ -8,21 +8,112 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Clientes - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/theme-system.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-size: 0.875rem;
+        }
         .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
+        .btn-pink { 
+            background-color: #FF1493; 
+            border-color: #FF1493; 
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
         .badge-revendedor { background-color: #FF1493; color: white; }
         .badge-cliente { background-color: #17a2b8; color: white; }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        .table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .table td {
+            font-size: 0.8rem;
+        }
+        .card-body h6 {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .card-body h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 0 !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+            
+            .card-body h3 {
+                font-size: 1.1rem;
+            }
+            
+            .row .col-md-3 {
+                margin-bottom: 15px;
+            }
+            
+            .table {
+                font-size: 0.75rem;
+            }
+            
+            .btn-pink {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .card {
+                margin-bottom: 10px;
+            }
+            
+            .table {
+                font-size: 0.7rem;
+            }
+            
+            .btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Botón toggle para móviles -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->
@@ -177,6 +268,44 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Sistema-de-ventas-AppLink-main/public/js/theme-system.js"></script>
+    <script>
+        // Toggle sidebar en móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Confirmación al cerrar sesión
+            var logoutLink = document.querySelector('a[href$="logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    if (!confirm('¿Seguro que deseas cerrar sesión?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
     <script>
         let clientes = [];
         let clienteEditando = null;

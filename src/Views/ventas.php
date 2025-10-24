@@ -8,21 +8,113 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Ventas - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/theme-system.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        body { 
+            background-color: #f8f9fa;
+            font-size: 0.875rem;
+        }
         .card-stat { border-left: 4px solid #FF1493; }
-        .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
+        .btn-pink { 
+            background-color: #FF1493; 
+            border-color: #FF1493; 
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
-        .product-card { cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .product-card { 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            border: 2px solid transparent;
+        }
         .product-card:hover { border-color: #FF1493; transform: scale(1.05); }
+        .card-body h6 {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .card-body h3, .card-body h5 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 0 !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 50px;
+            }
+            
+            .card-body h3, .card-body h5 {
+                font-size: 1.1rem;
+            }
+            
+            .row .col-md-3, .row .col-md-4, .row .col-md-8 {
+                margin-bottom: 15px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            
+            .product-card:hover {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .card-body h3, .card-body h5 {
+                font-size: 1rem;
+            }
+            
+            .btn-pink {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .card {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Botón toggle para móviles -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar centralizado -->
@@ -130,6 +222,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Sistema-de-ventas-AppLink-main/public/js/theme-system.js"></script>
     <script>
         function buscarProducto() {
             const busqueda = document.getElementById('buscarProducto').value;
@@ -308,6 +401,24 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         }
         // Inicializar tooltips y confirmación logout
         window.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar en móviles
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
             // Cargar productos iniciales
             cargarProductos();
             
