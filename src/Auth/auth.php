@@ -165,14 +165,8 @@ try {
     ];
     
     // Registrar último acceso
-    if (isset($using_postgresql) && $using_postgresql) {
-        $stmt = $pdo->prepare("UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = :id");
-        $stmt->bindParam(':id', $user_id);
-        $stmt->execute();
-    } else {
-        $update_sql = "UPDATE fs_usuarios SET ultimo_acceso = NOW() WHERE id_usuario = " . $user_id;
-        $conn->query($update_sql);
-    }
+    $update_sql = "UPDATE fs_usuarios SET ultimo_acceso = NOW() WHERE id_usuario = " . $user_id;
+    $conn->query($update_sql);
     
     $debug_log[] = "Login completado exitosamente";
     

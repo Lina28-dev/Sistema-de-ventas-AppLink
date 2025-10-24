@@ -2,7 +2,7 @@
 
 ## ❌ **Problema Identificado:**
 - Error: `SQLSTATE[42703]: Undefined column: 7 ERROR: column "cliente_nombre" of relation "pedidos" does not exist`
-- La API estaba configurada para PostgreSQL pero la BD real es MySQL
+- La API tenía configuración incorrecta pero ahora usa MySQL
 - Referencias incorrectas a tablas (`pedidos` vs `fs_pedidos`)
 
 ## ✅ **Soluciones Implementadas:**
