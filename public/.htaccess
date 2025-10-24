@@ -1,5 +1,15 @@
 # Redirigir todo al index.php
 RewriteEngine On
+
+# Permitir acceso directo a archivos de logout
+RewriteCond %{REQUEST_URI} ^/logout-simple\.php$ [NC]
+RewriteRule ^ - [L]
+
+# Redirigir peticiones de logout antiguas
+RewriteCond %{REQUEST_URI} ^/Auth/logout\.php$ [NC]
+RewriteRule ^ /Sistema-de-ventas-AppLink-main/public/logout-simple.php [R=301,L]
+
+# Regla general para el resto de URLs
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [L]

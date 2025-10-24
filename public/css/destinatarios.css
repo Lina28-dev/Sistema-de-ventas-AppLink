@@ -1,0 +1,123 @@
+/* Estilos para los selectores de destinatarios en ventas y pedidos */
+
+.destinatario-section {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    margin-bottom: 15px;
+}
+
+.destinatario-section .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.tipo-destinatario-select {
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+.tipo-destinatario-select:focus {
+    border-color: #FF1493;
+    box-shadow: 0 0 0 0.2rem rgba(255, 20, 147, 0.25);
+}
+
+.destinatario-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-left: 4px solid #FF1493;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.categoria-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.categoria-venta { background-color: #d4edda; color: #155724; }
+.categoria-devolucion { background-color: #f8d7da; color: #721c24; }
+.categoria-intercambio { background-color: #d1ecf1; color: #0c5460; }
+.categoria-muestra { background-color: #fff3cd; color: #856404; }
+.categoria-compra { background-color: #d4edda; color: #155724; }
+.categoria-reposicion { background-color: #d1ecf1; color: #0c5460; }
+.categoria-urgente { background-color: #f8d7da; color: #721c24; }
+.categoria-especial { background-color: #e2e3e5; color: #383d41; }
+
+/* Indicadores visuales para tipos de destinatario */
+.tipo-cliente::before {
+    content: "👤";
+    margin-right: 5px;
+}
+
+.tipo-proveedor::before {
+    content: "🏢";
+    margin-right: 5px;
+}
+
+.tipo-interno::before {
+    content: "🏛️";
+    margin-right: 5px;
+}
+
+/* Animaciones para cambios de tipo */
+.destinatario-transition {
+    transition: all 0.3s ease-in-out;
+}
+
+.destinatario-highlight {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    animation: highlightPulse 0.6s ease-in-out;
+}
+
+@keyframes highlightPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .destinatario-section {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .col-md-3, .col-md-4, .col-md-5, .col-md-6 {
+        margin-bottom: 15px;
+    }
+}
+
+/* Tooltips y ayudas */
+.destinatario-help {
+    font-size: 11px;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 3px;
+}
+
+.field-required::after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Estados de loading */
+.loading-options {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

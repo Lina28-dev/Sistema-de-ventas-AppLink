@@ -39,7 +39,7 @@ composer install
 
 3. Configurar el entorno:
 ```bash
-cp .env.example .env
+cp deployment/.env.example .env
 # Editar el archivo .env con tus configuraciones
 ```
 

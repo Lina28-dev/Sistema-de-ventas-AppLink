@@ -11,6 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/base.css">
+    <!-- Theme Styles -->
+    <link rel="stylesheet" href="assets/css/theme-styles.css">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
@@ -48,6 +51,9 @@
     <div class="container mt-3">
         <div id="infoGeneralText" class="alert alert-info" style="display: none;"></div>
     </div>
+    
+    <!-- Theme Switcher Script -->
+    <script src="assets/js/theme-switcher.js"></script>
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

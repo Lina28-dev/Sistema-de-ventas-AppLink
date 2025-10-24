@@ -1,11 +1,7 @@
 <?php
 // Configuración inicial de errores
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Se mostrará mediante ErrorHandler
-
-// Inicializar el manejador de errores mejorado
-require_once __DIR__ . '/../src/Utils/ErrorHandlerImproved.php';
-App\Utils\ErrorHandler::init();
+ini_set('display_errors', 1); // Mostrar errores directamente para debug
 
 // Configurar zona horaria
 date_default_timezone_set('America/Bogota');
@@ -16,11 +12,10 @@ ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 0); // Cambiar a 1 en HTTPS
 session_start();
 
-// Cargar configuración
+// Cargar configuración básica
 require_once __DIR__ . '/../config/paths.php';
-require_once __DIR__ . '/../config/app.php';
 
-// Autoloader mejorado para namespaces
+// Autoloader simplificado
 spl_autoload_register(function ($class) {
     // Convertir namespace a ruta de archivo
     $class = str_replace('App\\', '', $class);
@@ -28,9 +23,10 @@ spl_autoload_register(function ($class) {
     
     $paths = [
         __DIR__ . '/../src/' . $class . '.php',
-        MODELS_PATH . '/' . basename($class) . '.php',
-        CONTROLLERS_PATH . '/' . basename($class) . '.php',
-        UTILS_PATH . '/' . basename($class) . '.php'
+        __DIR__ . '/../src/Models/' . basename($class) . '.php',
+        __DIR__ . '/../src/Controllers/' . basename($class) . '.php',
+        __DIR__ . '/../src/Utils/' . basename($class) . '.php',
+        __DIR__ . '/../src/Middleware/' . basename($class) . '.php'
     ];
 
     foreach ($paths as $file) {
@@ -58,37 +54,31 @@ $request = str_replace('.php', '', $request);
 switch ($request) {
     case '/':
     case '':
-        require VIEWS_PATH . '/home.php';
+        require __DIR__ . '/../src/Views/home.php';
         break;
     case '/dashboard':
-        require VIEWS_PATH . '/dashboard.php';
+        require __DIR__ . '/../src/Views/dashboard.php';
         break;
     case '/usuarios':
-        require VIEWS_PATH . '/usuarios.php';
+        require __DIR__ . '/../src/Views/usuarios.php';
         break;
     case '/clientes':
-        require VIEWS_PATH . '/clientes.php';
+        require __DIR__ . '/../src/Views/clientes.php';
         break;
     case '/ventas':
-        require VIEWS_PATH . '/ventas.php';
+        require __DIR__ . '/../src/Views/ventas.php';
         break;
     case '/reportes':
-        require VIEWS_PATH . '/reportes.php';
-        break;
-    case '/perfil':
-        require VIEWS_PATH . '/perfil.php';
+        require __DIR__ . '/../src/Views/reportes.php';
         break;
     case '/pedidos':
-        require VIEWS_PATH . '/pedidos.php';
+        require __DIR__ . '/../src/Views/pedidos.php';
         break;
-    case '/productos':
-        require VIEWS_PATH . '/productos.php';
-        break;
-    case '/alta-baja':
-        require VIEWS_PATH . '/alta_baja.php';
+    case '/inventario':
+        require __DIR__ . '/../src/Views/inventario.php';
         break;
     case '/login':
-        require VIEWS_PATH . '/auth/login.php';
+        require __DIR__ . '/../src/Views/auth/login.php';
         break;
     case '/auth':
         require_once __DIR__ . '/../src/Auth/auth.php';
@@ -101,7 +91,7 @@ switch ($request) {
         break;
     default:
         http_response_code(404);
-        require VIEWS_PATH . '/404.php';
+        echo '<h1>404 - Página no encontrada</h1>';
         break;
 }
 ?>

@@ -1,12 +1,14 @@
 <?php
 return [
-    // Database Configuration
+    // Database Configuration - PostgreSQL
     'db' => [
+        'driver' => 'pgsql',
         'host' => $_ENV['DB_HOST'] ?? 'localhost',
-        'user' => $_ENV['DB_USER'] ?? 'root',
-        'pass' => $_ENV['DB_PASS'] ?? '',
-        'name' => $_ENV['DB_NAME'] ?? 'fs_clientes',
-        'charset' => 'utf8mb4'
+        'port' => $_ENV['DB_PORT'] ?? '5432',
+        'user' => $_ENV['DB_USER'] ?? 'applink_user',
+        'pass' => $_ENV['DB_PASS'] ?? 'applink_2024!',
+        'name' => $_ENV['DB_NAME'] ?? 'ventas_applink',
+        'charset' => 'utf8'
     ],
 
     // Application Configuration

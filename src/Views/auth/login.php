@@ -51,7 +51,7 @@ if (isset($_SESSION['usuario_nombre'])) {
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="login-container text-center">
-                    <img src="img/logo.jpg" alt="Lili Pink Logo" class="login-logo">
+                    <img src="/Sistema-de-ventas-AppLink-main/public/assets/images/logo.jpg" alt="Lili Pink Logo" class="login-logo">
                     <h2 class="mb-4">Iniciar Sesión</h2>
                     
                     <?php if (isset($_SESSION['error'])): ?>

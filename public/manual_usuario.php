@@ -123,7 +123,7 @@
     <nav class="navbar navbar-expand-lg navbar-light mb-4">
         <div class="container">
             <a class="navbar-brand" href="home.php">
-                <img src="img/logo.jpg" alt="AppLink Logo" height="40"> Manual de Usuario
+                <img src="assets/images/logo.jpg" alt="AppLink Logo" height="40"> Manual de Usuario
             </a>
         </div>
     </nav>
@@ -137,7 +137,7 @@
                     <p class="lead">Guía visual y paso a paso para aprovechar todas las funciones del sistema de gestión de ventas AppLink.</p>
                 </div>
                 <div class="col-lg-5 text-center">
-                    <img src="img/manual-de-usuario.jpg" alt="Manual de usuario" class="img-fluid screenshot">
+                    <img src="assets/images/manual-de-usuario.jpg" alt="Manual de usuario" class="img-fluid screenshot">
                 </div>
             </div>
         </div>
@@ -252,7 +252,7 @@
         <div class="container">
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
-                    <img src="img/logo.jpg" alt="Logo AppLink" height="50" class="mb-3" loading="lazy">
+                    <img src="assets/images/logo.jpg" alt="Logo AppLink" height="50" class="mb-3" loading="lazy">
                     <p class="text-muted">Manual de usuario para el sistema de gestión de ventas AppLink.</p>
                     <div class="social-icons">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
