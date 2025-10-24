@@ -168,7 +168,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                     <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="carritoItems">
                                         <div class="text-center text-muted py-4">
                                             <i class="fas fa-shopping-cart fa-3x mb-2"></i>
-                                            <p>El carrito est� vac�o</p>
+                                            <p>El carrito está vacío</p>
                                         </div>
                                     </div>
                                     <div class="card-footer bg-white">
@@ -196,7 +196,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                     <div class="tab-pane fade" id="historial">
                         <table class="table table-hover">
                             <thead>
-                                <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>M�todo</th><th>Acciones</th></tr>
+                                <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Método</th><th>Acciones</th></tr>
                             </thead>
                             <tbody id="historialVentas">
                                 <tr><td colspan="6" class="text-center text-muted">No hay ventas registradas</td></tr>
@@ -215,7 +215,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         <div id="ventasToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    �Venta finalizada exitosamente!
+                    Venta finalizada exitosamente!
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
             </div>
