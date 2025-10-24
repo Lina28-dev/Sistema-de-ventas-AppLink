@@ -46,35 +46,62 @@ try {
     <title>Usuarios - Sistema de Ventas AppLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Sistema-de-ventas-AppLink-main/public/css/base.css">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #FF1493; color: white; }
-        .sidebar .nav-link i { margin-right: 10px; }
         .main-content { padding: 20px; }
+        .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
         .btn-pink:hover { background-color: #DC143C; border-color: #DC143C; color: white; }
         .text-pink { color: #FF1493; }
+        
+        /* Estilos adicionales para consistencia visual */
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-radius: 0.5rem;
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            background-color: #f8f9fa;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background-color: #FF1493;
+            color: white;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: #FF1493;
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar fijo y responsive -->
-            <div class="col-md-2 sidebar p-3">
-                <?php 
-                    $activePage = 'usuarios';
-                    include __DIR__ . '/partials/sidebar.php';
-                ?>
-            </div>
-            <div class="col-md-10 main-content">
-                <div class="px-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="fw-bold">Gestión de Usuarios</h1>
-                        <button class="btn btn-pink" id="btnNuevoUsuario" onclick="var tab = new bootstrap.Tab(document.getElementById('nuevo-tab')); tab.show();"><i class="fas fa-plus"></i> Nuevo Usuario</button>
-                    </div>
+            <!-- Sidebar centralizado -->
+            <?php 
+                $activePage = 'usuarios';
+                include __DIR__ . '/partials/sidebar.php';
+            ?>
+            
+            <!-- Contenido principal -->
+            <main class="col-md-10 px-4 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="fw-bold"><i class="fas fa-user-cog"></i> Gestión de Usuarios</h1>
+                    <button class="btn btn-pink" id="btnNuevoUsuario" onclick="var tab = new bootstrap.Tab(document.getElementById('nuevo-tab')); tab.show();"><i class="fas fa-plus"></i> Nuevo Usuario</button>
+                </div>
                     <!-- Cards de métricas -->
                     <div class="row mb-4">
                         <div class="col-md-3">
@@ -230,7 +257,7 @@ try {
                             </div>
                         </div>
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     </div>

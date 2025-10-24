@@ -12,11 +12,9 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
     <title>Clientes - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
         .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
@@ -33,7 +31,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 include __DIR__ . '/partials/sidebar.php';
             ?>
             <main class="col-md-10 px-4">
-                <h1 class="mt-3"><i class="fas fa-users"></i> Gestión de Clientes</h1>
+                <h1 class="mt-3"><i class="fas fa-users"></i> Gestiï¿½n de Clientes</h1>
                 <div class="row my-4">
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Total Clientes</h6><h3 id="totalClientes">0</h3></div></div></div>
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Clientes con Historial</h6><h3 id="totalRevendedoras">0</h3></div></div></div>
@@ -51,7 +49,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por nombre, teléfono o identificación...">
+                                            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por nombre, telï¿½fono o identificaciï¿½n...">
                                             <button class="btn btn-pink" onclick="buscarCliente()"><i class="fas fa-search"></i></button>
                                         </div>
                                     </div>
@@ -69,7 +67,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <thead>
-                                            <tr><th>#</th><th>Nombre</th><th>Identificación</th><th>Teléfono</th><th>Email</th><th>Localidad</th><th>Tipo</th><th>Descuento</th><th>Acciones</th></tr>
+                                            <tr><th>#</th><th>Nombre</th><th>Identificaciï¿½n</th><th>Telï¿½fono</th><th>Email</th><th>Localidad</th><th>Tipo</th><th>Descuento</th><th>Acciones</th></tr>
                                         </thead>
                                         <tbody id="tablaClientes">
                                             <tr><td colspan="9" class="text-center text-muted">No hay clientes registrados</td></tr>
@@ -96,19 +94,19 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label"><i class="fas fa-id-card"></i> Tipo ID *</label>
                                             <select class="form-select" id="tipoId" required>
-                                                <option value="CC">Cédula</option>
-                                                <option value="CE">Cédula Extranjería</option>
+                                                <option value="CC">Cï¿½dula</option>
+                                                <option value="CE">Cï¿½dula Extranjerï¿½a</option>
                                                 <option value="NIT">NIT</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3">
-                                            <label class="form-label"><i class="fas fa-hashtag"></i> Número C.C *</label>
+                                            <label class="form-label"><i class="fas fa-hashtag"></i> Nï¿½mero C.C *</label>
                                             <input type="text" class="form-control" id="numeroId" required>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                                            <label class="form-label"><i class="fas fa-phone"></i> Telï¿½fono *</label>
                                             <input type="tel" class="form-control" id="telefono" required>
                                         </div>
                                         <div class="col-md-8 mb-3">
@@ -118,33 +116,33 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 mb-3">
-                                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Direcciï¿½n</label>
                                             <input type="text" class="form-control" id="direccion">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label"><i class="fas fa-city"></i> Ciudad *</label>
-                                            <input type="text" class="form-control" id="ciudad" value="Bogotá" required>
+                                            <input type="text" class="form-control" id="ciudad" value="Bogotï¿½" required>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label"><i class="fas fa-map"></i> Localidad *</label>
                                             <select class="form-select" id="localidad" required>
                                                 <option value="">Seleccione...</option>
-                                                <option value="Usaquén">Usaquén</option>
+                                                <option value="Usaquï¿½n">Usaquï¿½n</option>
                                                 <option value="Chapinero">Chapinero</option>
                                                 <option value="Santa Fe">Santa Fe</option>
-                                                <option value="San Cristóbal">San Cristóbal</option>
+                                                <option value="San Cristï¿½bal">San Cristï¿½bal</option>
                                                 <option value="Usme">Usme</option>
                                                 <option value="Kennedy">Kennedy</option>
-                                                <option value="Fontibón">Fontibón</option>
-                                                <option value="Engativá">Engativá</option>
+                                                <option value="Fontibï¿½n">Fontibï¿½n</option>
+                                                <option value="Engativï¿½">Engativï¿½</option>
                                                 <option value="Suba">Suba</option>
                                                 <option value="Bosa">Bosa</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label class="form-label"><i class="fas fa-mail-bulk"></i> Código Postal</label>
+                                            <label class="form-label"><i class="fas fa-mail-bulk"></i> Cï¿½digo Postal</label>
                                             <input type="text" class="form-control" id="codigoPostal">
                                         </div>
                                     </div>
@@ -274,11 +272,11 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         function verDetalles(id) {
             const cliente = clientes.find(c => c.id === id);
             if (cliente) {
-                alert(`DETALLES DEL CLIENTE\n\nID: ${cliente.id}\nNombre: ${cliente.nombre}\nIdentificación: ${cliente.tipoId} ${cliente.numeroId}\nTeléfono: ${cliente.telefono}\nEmail: ${cliente.email || 'No registrado'}\nDirección: ${cliente.direccion || 'No registrada'}\nLocalidad: ${cliente.localidad}, ${cliente.ciudad}\nTipo: ${cliente.tipo === '1' ? 'Revendedora' : 'Cliente'}\nDescuento: ${cliente.descuento}%\nFecha Registro: ${cliente.fechaRegistro}`);
+                alert(`DETALLES DEL CLIENTE\n\nID: ${cliente.id}\nNombre: ${cliente.nombre}\nIdentificaciï¿½n: ${cliente.tipoId} ${cliente.numeroId}\nTelï¿½fono: ${cliente.telefono}\nEmail: ${cliente.email || 'No registrado'}\nDirecciï¿½n: ${cliente.direccion || 'No registrada'}\nLocalidad: ${cliente.localidad}, ${cliente.ciudad}\nTipo: ${cliente.tipo === '1' ? 'Revendedora' : 'Cliente'}\nDescuento: ${cliente.descuento}%\nFecha Registro: ${cliente.fechaRegistro}`);
             }
         }
         function eliminarCliente(id) {
-            if (confirm('¿Está seguro de eliminar este cliente?')) {
+            if (confirm('ï¿½Estï¿½ seguro de eliminar este cliente?')) {
                 clientes = clientes.filter(c => c.id !== id);
                 actualizarTablaClientes();
                 actualizarEstadisticas();
@@ -331,7 +329,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             document.getElementById('contadorClientes').textContent = `Mostrando ${filtrados.length} clientes`;
         }
         function exportarClientes() {
-            alert('Función de exportación en desarrollo. Se exportarán ' + clientes.length + ' clientes a Excel.');
+            alert('Funciï¿½n de exportaciï¿½n en desarrollo. Se exportarï¿½n ' + clientes.length + ' clientes a Excel.');
         }
         actualizarEstadisticas();
     </script>

@@ -47,7 +47,10 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Sistema-de-ventas-AppLink-main/public/css/base.css">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
     <style>
+        body { background-color: #f8f9fa; }
+        .main-content { padding: 20px; }
         .producto-card {
             transition: transform 0.3s ease;
         }
@@ -69,7 +72,7 @@ try {
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3" style="min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white;">
+            <div class="col-md-2 sidebar p-3">
                 <?php 
                     $activePage = 'productos';
                     include __DIR__ . '/partials/sidebar.php';
@@ -77,7 +80,7 @@ try {
             </div>
 
             <!-- Contenido principal -->
-            <div class="col-md-10 main-content" style="padding: 20px;">
+            <div class="col-md-10 main-content">
                 <div class="px-4">
                     <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">

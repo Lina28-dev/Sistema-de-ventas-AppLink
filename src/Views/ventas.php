@@ -12,11 +12,9 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
     <title>Ventas - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
         .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
@@ -56,71 +54,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                             <button class="btn btn-pink" onclick="buscarProducto()"><i class="fas fa-search"></i></button>
                                         </div>
                                         <div class="row" id="productosLista">
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(1, 'Panty Invisible Clásico', 24990, 15)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Panty Invisible Clásico</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433250012</p>
-                                                        <h5 class="text-success">$24.990</h5>
-                                                        <span class="badge bg-info">Stock: 15</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(2, 'Brasier Push Up Encaje', 59990, 8)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/brasier-pushup.jpg" alt="Brasier Push Up Encaje" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Braiser Push Up Encaje</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433240013</p>
-                                                        <h5 class="text-success">$59.990</h5>
-                                                        <span class="badge bg-info">Stock: 8</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(3, 'Pijama Short Algodón', 79990, 5)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Pijama Short Algodón</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433230014</p>
-                                                        <h5 class="text-success">$79.990</h5>
-                                                        <span class="badge bg-info">Stock: 5</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(4, 'Camiseta Manga Corta', 29990, 12)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/camiseta-mc.jpg" alt="Camiseta Manga Corta" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Camiseta Manga Corta</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433220015</p>
-                                                        <h5 class="text-success">$29.990</h5>
-                                                        <span class="badge bg-info">Stock: 12</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(5, 'Bóxer Algodón', 19990, 20)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Bóxer Algodón</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433210016</p>
-                                                        <h5 class="text-success">$19.990</h5>
-                                                        <span class="badge bg-info">Stock: 20</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlCarrito(6, 'Medias Tobilleras', 9990, 30)">
-                                                    <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/medias-tobilleras.jpg" alt="Medias Tobilleras" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Medias Tobilleras</h6>
-                                                        <p class="text-muted mb-1">SKU: 7702433200017</p>
-                                                        <h5 class="text-success">$9.990</h5>
-                                                        <span class="badge bg-info">Stock: 30</span>
-                                                    </div>
-                                                </div>
+                                            <div class="col-12 text-center text-muted py-4">
+                                                <i class="fas fa-box-open fa-3x mb-3"></i>
+                                                <p>No hay productos disponibles</p>
+                                                <small>Los productos se cargarÃ¡n dinÃ¡micamente desde la base de datos</small>
                                             </div>
                                         </div>
                                     </div>
@@ -139,7 +76,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                     <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="carritoItems">
                                         <div class="text-center text-muted py-4">
                                             <i class="fas fa-shopping-cart fa-3x mb-2"></i>
-                                            <p>El carrito está vacío</p>
+                                            <p>El carrito estï¿½ vacï¿½o</p>
                                         </div>
                                     </div>
                                     <div class="card-footer bg-white">
@@ -167,7 +104,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                     <div class="tab-pane fade" id="historial">
                         <table class="table table-hover">
                             <thead>
-                                <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Método</th><th>Acciones</th></tr>
+                                <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Mï¿½todo</th><th>Acciones</th></tr>
                             </thead>
                             <tbody id="historialVentas">
                                 <tr><td colspan="6" class="text-center text-muted">No hay ventas registradas</td></tr>
@@ -186,7 +123,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         <div id="ventasToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    ¡Venta finalizada exitosamente!
+                    ï¿½Venta finalizada exitosamente!
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
             </div>
@@ -194,8 +131,56 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function buscarProducto() {
+            const busqueda = document.getElementById('buscarProducto').value;
+            const container = document.getElementById('productosLista');
+            
+            if (!busqueda.trim()) {
+                container.innerHTML = `
+                    <div class="col-12 text-center text-muted py-4">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>Ingresa un tÃ©rmino de bÃºsqueda</p>
+                        <small>Busca productos por nombre, SKU o categorÃ­a</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            // AquÃ­ se integrarÃ­a con la API o controlador para buscar productos
+            container.innerHTML = `
+                <div class="col-12 text-center text-muted py-4">
+                    <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                    <p>Buscando productos...</p>
+                    <small>Conectando con la base de datos</small>
+                </div>
+            `;
+            
+            // SimulaciÃ³n de bÃºsqueda sin resultados por el momento
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="col-12 text-center text-muted py-4">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>No se encontraron productos</p>
+                        <small>Intenta con otro tÃ©rmino de bÃºsqueda</small>
+                    </div>
+                `;
+            }, 1000);
+        }
+        
+        function cargarProductos() {
+            const container = document.getElementById('productosLista');
+            container.innerHTML = `
+                <div class="col-12 text-center text-muted py-4">
+                    <i class="fas fa-box-open fa-3x mb-3"></i>
+                    <p>No hay productos disponibles</p>
+                    <small>Los productos se cargarÃ¡n dinÃ¡micamente desde la base de datos</small>
+                </div>
+            `;
+        }
+        
         let carrito = [];
         let ventas = [];
+        
         function agregarAlCarrito(id, nombre, precio, stock) {
             const itemExistente = carrito.find(item => item.id === id);
             if (itemExistente) {
@@ -214,7 +199,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             const container = document.getElementById("carritoItems");
             const btnFinalizar = document.getElementById("btnFinalizar");
             if (carrito.length === 0) {
-                container.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-shopping-cart fa-3x mb-2"></i><p>El carrito está vacío</p></div>';
+                container.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-shopping-cart fa-3x mb-2"></i><p>El carrito estï¿½ vacï¿½o</p></div>';
                 btnFinalizar.disabled = true;
             } else {
                 let html = '';
@@ -311,7 +296,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 alert("Detalle de Venta #" + id + "\n" + venta.items.map(i => i.nombre + " x" + i.cantidad).join("\n"));
             }
         }
-        // Toast dinámico
+        // Toast dinï¿½mico
         function mostrarToast(mensaje, tipo) {
             var toastEl = document.getElementById('ventasToast');
             if (toastEl) {
@@ -321,8 +306,11 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 toast.show();
             }
         }
-        // Inicializar tooltips y confirmación logout
+        // Inicializar tooltips y confirmaciÃ³n logout
         window.addEventListener('DOMContentLoaded', function() {
+            // Cargar productos iniciales
+            cargarProductos();
+            
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                 new bootstrap.Tooltip(tooltipTriggerEl);
@@ -330,7 +318,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             var logoutLink = document.querySelector('a[href$="logout"]');
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
-                    if (!confirm('¿Seguro que deseas cerrar sesión?')) {
+                    if (!confirm('Â¿Seguro que deseas cerrar sesiÃ³n?')) {
                         e.preventDefault();
                     }
                 });

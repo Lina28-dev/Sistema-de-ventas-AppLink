@@ -12,11 +12,9 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
     <title>Pedidos - Lilipink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/Sistema-de-ventas-AppLink-main/public/css/sidebar.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #343a40 0%, #212529 100%); color: white; }
-        .sidebar .nav-link { color: rgba(255,255,255,0.8); padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
         .card-stat { border-left: 4px solid #FF1493; }
         .btn-pink { background-color: #FF1493; border-color: #FF1493; color: white; }
         .btn-pink:hover { background-color: #FF69B4; color: white; }
@@ -37,7 +35,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 include __DIR__ . '/partials/sidebar.php';
             ?>
             <main class="col-md-10 px-4">
-                <h1 class="mt-3"><i class="fas fa-box"></i> Gestión de Pedidos</h1>
+                <h1 class="mt-3"><i class="fas fa-box"></i> Gestiï¿½n de Pedidos</h1>
                 <div class="row my-4">
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">Pendientes</h6><h3 id="pedidosPendientes">0</h3></div></div></div>
                     <div class="col-md-3"><div class="card card-stat"><div class="card-body"><h6 class="text-muted">En Proceso</h6><h3 id="pedidosProceso">0</h3></div></div></div>
@@ -62,10 +60,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                         </div>
                                         <div class="row" id="productosListaPedido">
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(1, 'Panty Invisible Clásico', 24990, 15)">
+                                                <div class="card product-card" onclick="agregarAlPedido(1, 'Panty Invisible Clï¿½sico', 24990, 15)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Clásico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Panty Invisible Clásico</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/panty-invisible.jpg" alt="Panty Invisible Clï¿½sico" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Panty Invisible Clï¿½sico</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433250012</p>
                                                         <h5 class="text-success">$24.990</h5>
                                                         <span class="badge bg-info">Stock: 15</span>
@@ -84,10 +82,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(3, 'Pijama Short Algodón', 79990, 5)">
+                                                <div class="card product-card" onclick="agregarAlPedido(3, 'Pijama Short Algodï¿½n', 79990, 5)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Pijama Short Algodón</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/pijama-short.jpg" alt="Pijama Short Algodï¿½n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Pijama Short Algodï¿½n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433230014</p>
                                                         <h5 class="text-success">$79.990</h5>
                                                         <span class="badge bg-info">Stock: 5</span>
@@ -106,10 +104,10 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="card product-card" onclick="agregarAlPedido(5, 'Bóxer Algodón', 19990, 20)">
+                                                <div class="card product-card" onclick="agregarAlPedido(5, 'Bï¿½xer Algodï¿½n', 19990, 20)">
                                                     <div class="card-body text-center">
-                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="Bóxer Algodón" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
-                                                        <h6>Bóxer Algodón</h6>
+                                                        <img src="/Sistema-de-ventas-AppLink-main/public/img/boxer-algodon.jpg" alt="Bï¿½xer Algodï¿½n" class="img-fluid mb-2" style="max-height:120px;object-fit:contain;">
+                                                        <h6>Bï¿½xer Algodï¿½n</h6>
                                                         <p class="text-muted mb-1">SKU: 7702433210016</p>
                                                         <h5 class="text-success">$19.990</h5>
                                                         <span class="badge bg-info">Stock: 20</span>
