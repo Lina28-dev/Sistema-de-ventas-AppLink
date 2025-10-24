@@ -1,91 +1,149 @@
 <?php
-require_once __DIR__ . '/../Models/Venta.php';
-require_once __DIR__ . '/../Utils/Database.php';
-require_once __DIR__ . '/../Utils/Logger.php';
+/**
+ * Controlador de Ventas CRUD para Dashboard
+ * Maneja todas las operaciones de ventas: crear, leer, actualizar, eliminar
+ */
 
-class VentaController {
-    
-    public static function manejarSolicitud() {
-        $metodo = $_SERVER['REQUEST_METHOD'];
-        $accion = $_GET['accion'] ?? '';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Iniciar sesión si no está activa
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar autenticación
+if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+    http_response_code(403);
+    echo json_encode(['error' => 'No autorizado']);
+    exit;
+}
+
+// Obtener configuración de base de datos
+$config = require __DIR__ . '/../../config/app.php';
+
+try {
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['name']};charset={$config['db']['charset']}",
+        $config['db']['user'],
+        $config['db']['pass'],
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]
+    );
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Error de conexión a la base de datos']);
+    exit;
+}
+
+// Determinar método HTTP
+$metodo = $_SERVER['REQUEST_METHOD'];
+$accion = $_GET['accion'] ?? '';
+
+switch ($metodo) {
+    case 'GET':
+        if ($accion === 'listar') {
+            listarVentas($pdo);
+        } elseif ($accion === 'obtener' && isset($_GET['id'])) {
+            obtenerVenta($pdo, $_GET['id']);
+        } else {
+            listarVentas($pdo);
+        }
+        break;
         
-        try {
-            switch ($metodo) {
-                case 'GET':
-                    switch ($accion) {
-                        case 'obtener':
-                            return self::obtenerVenta($_GET['id']);
-                        case 'listar':
-                            return self::listarVentas($_GET);
-                        case 'detalle':
-                            return self::obtenerDetalleVenta($_GET['id']);
-                        default:
-                            return self::obtenerTodas();
-                    }
-                case 'POST':
-                    switch ($accion) {
-                        case 'crear':
-                            return self::crearVenta();
-                        case 'duplicar':
-                            return self::duplicarVenta($_POST['id']);
-                        default:
-                            return self::crearVenta();
-                    }
-                case 'PUT':
-                    parse_str(file_get_contents('php://input'), $_PUT);
-                    switch ($accion) {
-                        case 'estado':
-                            return self::cambiarEstado($_PUT['id'], $_PUT['estado']);
-                        default:
-                            return self::actualizarVenta($_PUT);
-                    }
-                case 'DELETE':
-                    return self::cancelarVenta($_GET['id']);
-            }
-        } catch (Exception $e) {
-            Logger::error('Error en VentaController: ' . $e->getMessage());
-            return ['error' => $e->getMessage()];
+    case 'POST':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if ($accion === 'crear') {
+            crearVenta($pdo, $data);
         }
-    }
+        break;
+        
+    case 'PUT':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if ($accion === 'actualizar' && isset($_GET['id'])) {
+            actualizarVenta($pdo, $_GET['id'], $data);
+        }
+        break;
+        
+    case 'DELETE':
+        if ($accion === 'eliminar' && isset($_GET['id'])) {
+            eliminarVenta($pdo, $_GET['id']);
+        }
+        break;
+        
+    default:
+        http_response_code(405);
+        echo json_encode(['error' => 'Método no permitido']);
+        break;
+}
     
-    public static function obtenerTodas() {
-        try {
-            $db = Database::getConnection();
-            $stmt = $db->query("
-                SELECT v.*, c.nombre as cliente_nombre, u.nombre as vendedor_nombre
-                FROM fs_ventas v 
-                LEFT JOIN fs_clientes c ON v.cliente_id = c.id 
-                LEFT JOIN fs_usuarios u ON v.id_usuario = u.id
-                ORDER BY v.fecha_venta DESC
-            ");
-            
-            $ventas = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $ventas[] = [
-                    'id' => (int)$row['id'],
-                    'numero_venta' => $row['numero_venta'],
-                    'fecha' => $row['fecha_venta'],
-                    'cliente' => $row['cliente_nombre'] ?? $row['cliente_nombre'] ?? 'Cliente General',
-                    'cliente_id' => $row['cliente_id'],
-                    'total' => (float)$row['total'],
-                    'subtotal' => (float)$row['subtotal'],
-                    'estado' => $row['estado'] ?? 'pendiente',
-                    'metodo' => $row['metodo_pago'] ?? 'efectivo',
-                    'vendedor' => $row['vendedor_nombre'] ?? 'Sistema',
-                    'vendedor_id' => $row['id_usuario'],
-                    'descuento' => (float)($row['descuento'] ?? 0),
-                    'observaciones' => $row['observaciones'] ?? '',
-                    'productos' => $row['productos'] ?? '[]',
-                    'items' => json_decode($row['productos'] ?? '[]', true) ?: []
-                ];
-            }
-            
-            return ['success' => true, 'data' => $ventas];
-        } catch (Exception $e) {
-            Logger::error('Error al obtener ventas: ' . $e->getMessage());
-            return ['error' => 'Error al obtener las ventas'];
+/**
+ * Listar todas las ventas con paginación
+ */
+function listarVentas($pdo) {
+    try {
+        $limite = (int)($_GET['limite'] ?? 10);
+        $pagina = (int)($_GET['pagina'] ?? 1);
+        $offset = ($pagina - 1) * $limite;
+        $busqueda = $_GET['busqueda'] ?? '';
+        
+        // Construir consulta base
+        $whereClause = '';
+        $params = [];
+        
+        if (!empty($busqueda)) {
+            $whereClause = "WHERE cliente LIKE ? OR producto LIKE ?";
+            $params = ["%$busqueda%", "%$busqueda%"];
         }
+        
+        // Contar total de registros
+        $stmtCount = $pdo->prepare("SELECT COUNT(*) as total FROM ventas $whereClause");
+        $stmtCount->execute($params);
+        $totalRegistros = $stmtCount->fetch()['total'];
+        
+        // Obtener ventas con paginación
+        $sql = "
+            SELECT id, fecha_venta, cliente, producto, cantidad, 
+                   precio_unitario, total,
+                   DATE_FORMAT(fecha_venta, '%d/%m/%Y %H:%i') as fecha_formateada
+            FROM ventas 
+            $whereClause
+            ORDER BY fecha_venta DESC 
+            LIMIT ? OFFSET ?
+        ";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array_merge($params, [$limite, $offset]));
+        $ventas = $stmt->fetchAll();
+        
+        // Formatear números
+        foreach ($ventas as &$venta) {
+            $venta['precio_unitario'] = (float)$venta['precio_unitario'];
+            $venta['total'] = (float)$venta['total'];
+            $venta['cantidad'] = (int)$venta['cantidad'];
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'datos' => $ventas,
+            'paginacion' => [
+                'total' => $totalRegistros,
+                'pagina_actual' => $pagina,
+                'limite' => $limite,
+                'total_paginas' => ceil($totalRegistros / $limite)
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Error al listar ventas: ' . $e->getMessage()]);
     }
+}
     
     public static function obtenerVenta($id) {
         try {
