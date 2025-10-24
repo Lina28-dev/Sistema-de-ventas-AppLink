@@ -28,8 +28,8 @@ Desarrollado con tecnologías modernas y buenas prácticas de programación.
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/Lina28-dev/gestor-ventas-lilipink.git
-cd gestor-ventas-lilipink
+git clone Lina28-dev/Sistema-de-ventas-AppLink
+cd Lina28-dev/Sistema-de-ventas-AppLink
 ```
 
 2. Instalar dependencias:
@@ -57,7 +57,7 @@ chmod 755 -R storage/cache
 ## 🏗️ Estructura del Proyecto
 
 ```
-gestor-ventas-lilipink/
+Lina28-dev/Sistema-de-ventas-AppLink/
 ├── config/           # Configuración de la aplicación
 ├── database/        # Migraciones y seeders
 ├── public/          # Archivos públicos (index.php, assets)
